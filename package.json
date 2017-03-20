@@ -1,0 +1,31 @@
+{
+  "name": "Est",
+  "version": "0.0.1",
+  "description": "reStructuredText parser and renderer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/frantic1048/est.git"
+  },
+  "keywords": [
+    "reStructuredText",
+    "rST",
+    "parse",
+    "render",
+    "HTML"
+  ],
+  "author": "frantic1048",
+  "license": "GPL-3.0",
+  "homepage": "https://bitbucket.org/frantic1048/est#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
