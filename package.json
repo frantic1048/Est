@@ -4,7 +4,10 @@
   "description": "reStructuredText parser and renderer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "fly dev",
+    "ci": "fly ci",
+    "test": "fly test",
+    "lint": "fly lint"
   },
   "repository": {
     "type": "git",
@@ -21,11 +24,24 @@
   "license": "GPL-3.0",
   "homepage": "https://bitbucket.org/frantic1048/est#readme",
   "devDependencies": {
-    "cz-conventional-changelog": "^2.0.0"
+    "asty": "^1.4.8",
+    "cz-conventional-changelog": "^2.0.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
+    "fly": "^2.0.5",
+    "fly-ava": "^1.0.2",
+    "fly-eslint": "github:frantic1048/fly-eslint#fly2",
+    "fly-peg": "^1.0.1",
+    "fly-watch": "^1.1.1",
+    "pegjs-util": "^1.4.1"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "engines": {
+    "node": ">= 6"
   }
 }
