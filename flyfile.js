@@ -3,8 +3,6 @@ const estSrc = './src/**/*.js'
 const pegSrc = './src/parser.pegjs'
 const buildTarget = './build/node/'
 
-const allSrc = [testSrc, estSrc]
-
 exports.build = function* build (fly) {
   yield fly.source(pegSrc)
     .peg({format: 'commonjs'})
@@ -13,16 +11,16 @@ exports.build = function* build (fly) {
 }
 
 exports.lint = function* lint (fly) {
-  yield fly.source(allSrc).eslint()
+  yield fly.source([estSrc, testSrc]).eslint()
 }
 
 exports.test = function* test (fly) {
-  yield fly.source('./test/index.js').ava()
+  yield fly.source(testSrc).ava()
 }
 
 exports.dev = function* dev (fly) {
   yield fly.start('ci')
-  yield fly.watch(allSrc, ['build', 'test'])
+  yield fly.watch([estSrc, pegSrc, testSrc], ['build', 'test'])
 }
 
 exports.ci = function* ci (fly) {
