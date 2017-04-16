@@ -2,7 +2,9 @@ const parser = require('./parser')
 const ASTY = require('asty')
 const PEGUtil = require('pegjs-util')
 
-module.exports = function main (rst, opts) {
+const tokenTypes = require('./tokenTypes')
+
+exports.parse = function main (rst, opts) {
   // deal with opts
   const asty = new ASTY()
   const result = PEGUtil.parse(
@@ -22,3 +24,5 @@ module.exports = function main (rst, opts) {
   }
   return result
 }
+
+exports.tokenTypes = tokenTypes

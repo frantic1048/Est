@@ -1,29 +1,45 @@
 {
     const unroll = options.util.makeUnroll(location, options)
     const ast = options.util.makeAST(location, options)
-    const T = require('./tokenTypes')
+    const T = require('./').tokenTypes
 }
 
 Document
-  = p:Paragraph b:Blankline d:Document
-  { return unroll(p, d)}
-  //{ return  [p].concat(d) }
-  / Paragraph*
+// contains block level token
+  = b:Block bb:(BlankLine Block)*
+  { return unroll(b, bb, 1)}
+
+Block
+  = BulletList
+  / Paragraph
 
 Paragraph
-  = l1:Inline NewLine l2:Inline
-  { return ast(T.Paragraph).set('vaule', l1.join('') + l2.join('')) }
-  / l3:Inline
-  { return ast(T.Paragraph).set('vaule', l3.join(''))}
+  = i:Plain ii:(NewLine Plain)*
+  { return ast(T.Paragraph).add(unroll(i, ii, 1)) }
 
+BulletList
+  = b:BulletListItem bb:(NewLine BulletListItem)*
+  { return ast(T.BulletList).add(unroll(b, bb, 1)) }
 
-Inline
-  = char: [^\r\n]+ { return char }
+BulletListItem
+  = BulletListBullet _ i:Plain
+  { return ast(T.BulletListItem).add(i) }
 
-Blankline
+BulletListBullet
+  = [*+-‧‣⁃]
+
+Plain
+  = c: [^\r\n]+
+  { return ast(T.Plain).set('value', c.join(''))}
+
+BlankLine
   = NewLine NewLine+
 
 NewLine
   = [\r][\n]
   / [\r]
   / [\n]
+
+// whitspace
+_
+  = " "

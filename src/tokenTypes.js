@@ -1,3 +1,6 @@
 module.exports = {
-  Paragraph: Symbol('Paragraph')
+  Plain: Symbol('Plain'),
+  Paragraph: Symbol('Paragraph'),
+  BulletList: Symbol('BulletList'),
+  BulletListItem: Symbol('BulletListItem')
 }
