@@ -34,6 +34,7 @@
     "fly-eslint": "github:frantic1048/fly-eslint#fly2",
     "fly-peg": "^1.0.1",
     "fly-watch": "^1.1.1",
+    "lodash.ismatch": "^4.4.0",
     "pegjs-util": "^1.4.1"
   },
   "config": {
