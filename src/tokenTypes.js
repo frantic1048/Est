@@ -1,6 +1,13 @@
 module.exports = {
-  Plain: Symbol('Plain'),
+  // BodyElement
   Paragraph: Symbol('Paragraph'),
   BulletList: Symbol('BulletList'),
-  BulletListItem: Symbol('BulletListItem')
+  ListItem: Symbol('ListItem'),
+
+  // InlineMarkup
+  Emphasis: Symbol('Emphasis'),
+  StrongEmphasis: Symbol('StrongEmphasis'),
+  InlineLiterals: Symbol('InlineLiterals'),
+  InterpretedText: Symbol('InterpretedText'),
+  Text: Symbol('Text')
 }
