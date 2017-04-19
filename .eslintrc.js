@@ -1,3 +1,4 @@
 module.exports = {
-  extends: 'standard'
+  plugins: ['ava'],
+  extends: ['standard', 'plugin:ava/recommended']
 }
