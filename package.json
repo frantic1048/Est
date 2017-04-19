@@ -26,9 +26,11 @@
   "devDependencies": {
     "asty": "^1.4.8",
     "cz-conventional-changelog": "^2.0.0",
-    "eslint-config-standard": "^7.1.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^2.1.1",
+    "eslint-plugin-standard": "^3.0.1",
     "fly": "^2.0.5",
     "fly-ava": "^1.0.2",
     "fly-eslint": "github:frantic1048/fly-eslint#fly2",
