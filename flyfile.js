@@ -1,3 +1,4 @@
+const spawn = require('child_process').spawn
 const testSrc = './test/*.js'
 const estSrc = './src/**/*.js'
 const pegSrc = './src/parser.pegjs'
@@ -22,7 +23,10 @@ exports.lint = function* lint (fly) {
 }
 
 exports.test = function* test (fly) {
-  yield fly.source(testSrc).ava()
+  // fly-ava not showing logs, use spawn()
+  // https://github.com/flyjs/fly-ava/issues/15
+  // yield fly.source(testSrc).ava()
+  spawn('./node_modules/ava/cli.js', ['-v'], { stdio: 'inherit' })
 }
 
 exports.dev = function* dev (fly) {
