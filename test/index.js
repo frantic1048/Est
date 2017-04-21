@@ -2,17 +2,35 @@ import test from 'ava'
 
 // remove this when AVA has partial match assertion
 // https://github.com/avajs/ava/issues/845
-import isMatch from 'lodash.ismatch'
+import isMatch from './fixtures/isMatch'
 
 import est from '../'
+import Tracer from './fixtures/Tracer'
+
 const parse = est.parse
 const T = est.tokenTypes
 
+test.beforeEach('', t => {
+  t.context = {
+    success: false,
+    tracer: new Tracer()
+  }
+})
+
+test.afterEach('', t => { t.context.success = true })
+
+test.afterEach.always('', t => {
+  if (t.context.success === false) {
+    t.context.tracer.log()
+  }
+})
+
 test('Paragraph', t => {
+  const tracer = t.context.tracer
   const actual = parse(`p1
 
 p21
-p22`)
+p22`, {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -35,7 +53,8 @@ p22`)
 })
 
 test('Emphasis', t => {
-  const actual = parse('*emphasis*')
+  const tracer = t.context.tracer
+  const actual = parse('*emphasis*', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -52,7 +71,8 @@ test('Emphasis', t => {
 })
 
 test('Emphasis:escape', t => {
-  const actual = parse('*emph\\*sis*')
+  const tracer = t.context.tracer
+  const actual = parse('*emph\\*sis*', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -69,7 +89,8 @@ test('Emphasis:escape', t => {
 })
 
 test('Emphasis:outer escape', t => {
-  const actual = parse('\\**emph\\*sis*\\*')
+  const tracer = t.context.tracer
+  const actual = parse('\\**emph\\*sis*\\*', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -92,7 +113,8 @@ test('Emphasis:outer escape', t => {
 })
 
 test('StrongEmphasis', t => {
-  const actual = parse('**strongemphasis**')
+  const tracer = t.context.tracer
+  const actual = parse('**strongemphasis**', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -109,7 +131,8 @@ test('StrongEmphasis', t => {
 })
 
 test('InlineLiterals', t => {
-  const actual = parse('``inline literals``')
+  const tracer = t.context.tracer
+  const actual = parse('``inline literals``', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -126,7 +149,8 @@ test('InlineLiterals', t => {
 })
 
 test('InterpretedText', t => {
-  const actual = parse('`interpreted text`')
+  const tracer = t.context.tracer
+  const actual = parse('`interpreted text`', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -143,7 +167,8 @@ test('InterpretedText', t => {
 })
 
 test('InterpretedText:prefix role', t => {
-  const actual = parse(':rr:`interpreted text`')
+  const tracer = t.context.tracer
+  const actual = parse(':rr:`interpreted text`', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -161,7 +186,8 @@ test('InterpretedText:prefix role', t => {
 })
 
 test('InterpretedText:suffix role', t => {
-  const actual = parse('`interpreted text`:rr:')
+  const tracer = t.context.tracer
+  const actual = parse('`interpreted text`:rr:', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -179,9 +205,10 @@ test('InterpretedText:suffix role', t => {
 })
 
 test('BulletList:normal', t => {
+  const tracer = t.context.tracer
   const actual = parse(`- item1
 
-- item2`)
+- item2`, {tracer})
   const expected = {
     ast: [
       {

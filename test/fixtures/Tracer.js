@@ -1,17 +1,4 @@
 // exports a Tracer used with parser for debugging
-// usage:
-//   const est = require('./')
-//   const Tracer = require('test/fixtures/Tracer')
-//   test('test with tracer', t => {
-//      const tracer = new Tracer()
-//      const res = est.parse('- wow trace', { tracer })
-//      try {
-//        t.is(res, 'whatever')
-//      } catch (e) {
-//        // print trace on test fail
-//        tracer.log()
-//      }
-//   })
 
 const chalk = require('chalk')
 

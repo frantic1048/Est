@@ -26,7 +26,9 @@ exports.test = function* test (fly) {
   // fly-ava not showing logs, use spawn()
   // https://github.com/flyjs/fly-ava/issues/15
   // yield fly.source(testSrc).ava()
-  spawn('./node_modules/ava/cli.js', ['-v'], { stdio: 'inherit' })
+  spawn('./node_modules/ava/cli.js',
+    ['-v', '--no-power-assert'],
+    { stdio: 'inherit' })
 }
 
 exports.dev = function* dev (fly) {
