@@ -9,5 +9,9 @@ module.exports = {
   StrongEmphasis: Symbol('StrongEmphasis'),
   InlineLiterals: Symbol('InlineLiterals'),
   InterpretedText: Symbol('InterpretedText'),
+  AnonymousHyperlink: Symbol('AnonymousHyperlink'),
+  NamedHyperlink: Symbol('NamedHyperlink'),
+
+  // text nodes
   Text: Symbol('Text')
 }

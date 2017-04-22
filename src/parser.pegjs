@@ -35,11 +35,44 @@ BulletListBullet
 
 
 InlineMarkup
-  = InlineLiterals
+  = AnonymousHyperlink
+  / NamedHyperlink
+  / InlineLiterals
   / InterpretedText
   / StrongEmphasis
   / Emphasis
   / TextEscaped
+
+AnonymousHyperlink
+  = !"\\" "`" t:TextInlineLiteral !"\\" "`__"
+  { return ast(T.AnonymousHyperlink).add(t) }
+  / t:TextReferenceName !"\\" "__"
+  { return ast(T.AnonymousHyperlink).add(t) }
+
+// TODO: test
+NamedHyperlink
+  = !"\\" "`" t:TextInlineLiteral !"\\" "`_"
+  { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
+  / t:TextReferenceName !"\\" "_"
+  { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
+
+
+StandaloneHyperlink
+  = !"\\" "`" t:TextInlineLiteral !"\\" "`__"
+
+TextReferenceName
+  = c:CharReferenceName+
+  { return ast(T.Text).set('value', c.join('')) }
+
+CharReferenceName
+  // normalize multiple whitspace to one space
+  = c:_+ { return ' '}
+  / "\\<" {return '<'}
+  / "\\>" {return '>'}
+  / "\\:" {return ':'}
+  / "\\_" {return '_'}
+  //   <     >       :     _
+  / c:[^\u003c\u003e\u003a\u005f] {return c}
 
 InlineLiterals
   = !"\\" "``"  t:TextInlineLiteral !"\\" "``"
@@ -56,26 +89,16 @@ InterpretedText
   { return ast(T.InterpretedText).add(t) }
 
 InterpretedTextRole
-  = ":" r:AlphaNum+ ":"
-  { return r.join('')}
+  = ":" r:TextReferenceName ":"
+  { return r.get('value')}
 
 
 TextInlineLiteral
   = c:CharInlineLiteral+
-  {
-    const escape = {
-      '\\`': '`'
-    }
-
-    const re = /\\`/g
-
-    const text = c.join('').replace(re, s => escape[s])
-
-    return ast(T.Text).set('value', text)
-  }
+  { return ast(T.Text).set('value', c.join('')) }
 
 CharInlineLiteral
-  = "\\`"
+  = "\\`" { return '`' }
   //  CR LF `
   / [^\r\n\u0060]
 
@@ -89,38 +112,22 @@ Emphasis
 
 TextEscaped
   = c:CharEscaped+
-  {
-    const escape = {
-      '\\\\': '\\',
-      '\\r': '\r',
-      '\\n': '\n',
-      '\\*': '*',
-      '\\`': '`',
-      '\\|': '|',
-      '\\_': '_',
-      '\\[': '[',
-      '\\]': ']'
-    }
-
-    const re = /\\\\|\\r|\\n|\\\*|\\`|\\\||\\_|\\\[|\\\]/g
-
-    const text = c.join('').replace(re, s => escape[s])
-
-    return ast(T.Text).set('value', text)
-  }
+  { return ast(T.Text).set('value', c.join('')) }
 
 CharEscaped
-  = "\\\\"
-  / "\\r"
-  / "\\n"
-  / "\\*"
-  / "\\`"
-  / "\\|"
-  / "\\_"
-  / "\\["
-  / "\\]"
+  = "\\\\" { return "\\"}
+  / "\\*"  { return "\*"}
+  / "\\`"  { return "`"}
+  / "\\|"  { return "|"}
+  / "\\_"  { return "_"}
+  / "\\["  { return "["}
+  / "\\]"  { return "]"}
   //  CR LF *    `      |     _     [     ]
   / [^\r\n\u002A\u0060\u007c\u005f\u005b\u005d]
+
+NonSpace
+  // same as \S in regex
+  = [^ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
 
 AlphaNum
   = [a-zA-Z0-9]
@@ -135,4 +142,4 @@ NewLine
 
 // whitspace
 _
-  = " "
+  = [ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
