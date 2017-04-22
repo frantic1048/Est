@@ -5,17 +5,16 @@ const PEGUtil = require('pegjs-util')
 const tokenTypes = require('./tokenTypes')
 
 exports.parse = function main (rst, opts) {
-  // deal with opts
   const asty = new ASTY()
   const result = PEGUtil.parse(
     parser,
     rst,
-    {
+    Object.assign({
       startRule: 'Document',
       makeAST: function (line, column, offset, args) {
         return asty.create.apply(asty, args).pos(line, column, offset)
       }
-    }
+    }, opts)
   )
 
   if (result.error !== null) {
