@@ -32,8 +32,8 @@ exports.test = function* test (fly) {
 }
 
 exports.dev = function* dev (fly) {
-  yield fly.start('ci')
-  yield fly.watch([estSrc, pegSrc, testSrc], 'ci')
+  yield fly.serial(['buildDebug', 'test'])
+  yield fly.watch([estSrc, pegSrc, testSrc], ['buildDebug', 'test'])
 }
 
 exports.ci = function* ci (fly) {
