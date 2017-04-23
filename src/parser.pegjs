@@ -35,7 +35,8 @@ BulletListBullet
 
 
 InlineMarkup
-  = AnonymousHyperlink
+  = EmbeddedHyperlink
+  / AnonymousHyperlink
   / NamedHyperlink
   / InlineLiterals
   / InterpretedText
@@ -43,22 +44,39 @@ InlineMarkup
   / Emphasis
   / TextEscaped
 
+// TODO: URI
+// https://www.ietf.org/rfc/rfc2396.txt
+// http://www.rfc-editor.org/rfc/rfc2732.txt
+// URI
+
+EmbeddedHyperlink
+// TODO embedded URI
+// = !"\\" "`" t:TextInlineLiteral !"\\" "<" t:TextURI !"\\" ">" !"\\" "`__"
+  = !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" r:TextReferenceName !"\\" "_" !"\\" ">" !"\\" "`__"
+  { return ast(T.EmbeddedHyperlink).add(t).set('name', r.get('value')) }
+
+TextEmbeddedHyperlink
+  = c:CharEmbeddedHyperlink+
+  { return ast(T.Text).set('value', c.join('')) }
+
+CharEmbeddedHyperlink
+  // normalize multiple whitspace to one space
+  = "\\<" {return '<'}
+  / "\\>" {return '>'}
+  //   <     >
+  / c:[^\u003c\u003e] {return c}
+
 AnonymousHyperlink
   = !"\\" "`" t:TextInlineLiteral !"\\" "`__"
   { return ast(T.AnonymousHyperlink).add(t) }
   / t:TextReferenceName !"\\" "__"
   { return ast(T.AnonymousHyperlink).add(t) }
 
-// TODO: test
 NamedHyperlink
   = !"\\" "`" t:TextInlineLiteral !"\\" "`_"
   { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
   / t:TextReferenceName !"\\" "_"
   { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
-
-
-StandaloneHyperlink
-  = !"\\" "`" t:TextInlineLiteral !"\\" "`__"
 
 TextReferenceName
   = c:CharReferenceName+
