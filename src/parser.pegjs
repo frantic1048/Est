@@ -52,9 +52,15 @@ InlineMarkup
   / TextEscaped
 
 StandAloneHyperlink
-  = t:TextAbsoluteURI
+  = t:TextEmailAdress
+  { return ast(T.StandAloneHyperlink).add(t).set('ref', 'mailto:' + t.get('value')) }
+  / t:TextAbsoluteURI
   { return ast(T.StandAloneHyperlink).add(t).set('ref', t.get('value')) }
-//  / StandAloneEmailAdress
+
+// URIAuthority without URIPort
+TextEmailAdress
+  = a:(URIUserInfo "@" URIHost)
+  {return ast(T.Text).set('value',(flatten(a).join('')))}
 
 // absolute-URI
 // https://tools.ietf.org/html/rfc3986#appendix-A
@@ -191,9 +197,6 @@ URIFragment
   = t:(URIPChar / "/" / "?")*
   {return t.join('')}
 
-// TODO:
-// StandAloneEmailAdress
-
 EmbeddedHyperlink
 // TODO embedded URI
 // = !"\\" "`" t:TextInlineLiteral !"\\" "<" t:TextURI !"\\" ">" !"\\" "`__"
@@ -308,9 +311,7 @@ BlankLine
   = NewLine NewLine+
 
 NewLine
-  = [\r][\n]
-  / [\r]
-  / [\n]
+  = "\r\n" / "\r" / "\n"
 
 // whitspace
 _

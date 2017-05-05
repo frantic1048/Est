@@ -324,4 +324,25 @@ test('IPv6 rule9', t => {
   t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
 })
 
-test.todo('bare email adress')
+test('bare email adress', t => {
+  const tracer = t.context.tracer
+  const actual = parse('chino+chiya@frantic1048.com', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.StandAloneHyperlink,
+        A: {ref: 'mailto:chino+chiya@frantic1048.com'},
+        C: [
+          {
+            T: T.Text,
+            A: {
+              value: 'chino+chiya@frantic1048.com'
+            }
+          }
+        ]
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
+})
