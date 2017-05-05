@@ -82,14 +82,8 @@ URIHierPart
   / URIPathEmpty
 
 URIAuthority
-  = u:(URIUserInfo "@")? h:URIHost p:(":" URIPort)?
-  {
-    let res = ''
-    if (u) res += u.join('')
-    res += h
-    if (p) res += p.join('')
-    return res
-  }
+  = a:((URIUserInfo "@")? URIHost (":" URIPort)?)
+  {return flatten(a).join('')}
 
 URIUserInfo
   = (URIUnreserved / URIPCTEncoded / URISubDelims / ":")*
@@ -149,7 +143,8 @@ URIDecOctet
   / Num           // 0-9
 
 URIIPvFuture
-  = "v" Hex+ "." ( URIUnreserved / URISubDelims / ":" )+
+  = a:("v" Hex+ "." ( URIUnreserved / URISubDelims / ":" )+)
+  {return flatten(a).join('')}
 
 URIIPv4Address
   = a:(URIDecOctet "." URIDecOctet "." URIDecOctet "." URIDecOctet)
@@ -165,7 +160,7 @@ URIPort
 
 URIPathAbempty
   = t:("/" URISegment)*
-  { return t.map(s => s.join('')).join('') }
+  { return flatten(t).join('') }
 
 URISegment
   = c:URIPChar*
@@ -196,6 +191,7 @@ URIFragment
   = t:(URIPChar / "/" / "?")*
   {return t.join('')}
 
+// TODO:
 // StandAloneEmailAdress
 
 EmbeddedHyperlink

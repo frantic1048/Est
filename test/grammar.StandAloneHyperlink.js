@@ -71,20 +71,20 @@ test('IPv4 URL', t => {
   t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
 })
 
-test('port, fragment and query', t => {
+test('authority, port, fragment and query', t => {
   const tracer = t.context.tracer
-  const actual = parse('foo://example.com:8042/over/there?name=ferret#nose', {tracer})
+  const actual = parse('foo://alice@example.com:8042/over/there?name=ferret#nose', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
       C: [{
         T: T.StandAloneHyperlink,
-        A: {ref: 'foo://example.com:8042/over/there?name=ferret#nose'},
+        A: {ref: 'foo://alice@example.com:8042/over/there?name=ferret#nose'},
         C: [
           {
             T: T.Text,
             A: {
-              value: 'foo://example.com:8042/over/there?name=ferret#nose'
+              value: 'foo://alice@example.com:8042/over/there?name=ferret#nose'
             }
           }
         ]
