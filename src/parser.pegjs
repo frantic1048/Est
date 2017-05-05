@@ -52,11 +52,16 @@ InlineMarkup
   / TextEscaped
 
 StandAloneHyperlink
-// PLAN: use decodeURI(t.get('value')) as text node content
   = t:TextEmailAdress
   { return ast(T.StandAloneHyperlink).add(t).set('ref', 'mailto:' + t.get('value')) }
   / t:TextAbsoluteURI
-  { return ast(T.StandAloneHyperlink).add(t).set('ref', t.get('value')) }
+  {
+    // decodeURI for displayed text
+    const uri = t.get('value')
+    const text = decodeURI(uri)
+    const tNode = ast(T.Text).set('value', text)
+    return ast(T.StandAloneHyperlink).add(tNode).set('ref', uri)
+  }
 
 // URIAuthority without URIPort
 TextEmailAdress

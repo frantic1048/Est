@@ -61,7 +61,7 @@ test('PCTEncoded', t => {
           {
             T: T.Text,
             A: {
-              value: 'http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB'
+              value: 'http://gochiusa.wikia.com/wiki/Chino_Kafū'
             }
           }
         ]
