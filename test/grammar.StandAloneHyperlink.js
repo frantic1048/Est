@@ -48,6 +48,29 @@ test('normal URL', t => {
   t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
 })
 
+test('PCTEncoded', t => {
+  const tracer = t.context.tracer
+  const actual = parse('http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.StandAloneHyperlink,
+        A: {ref: 'http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB'},
+        C: [
+          {
+            T: T.Text,
+            A: {
+              value: 'http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB'
+            }
+          }
+        ]
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
+})
+
 test('IPv4 URL', t => {
   const tracer = t.context.tracer
   const actual = parse('ftp://10.0.0.55/rfc/rfc1808.txt', {tracer})

@@ -52,6 +52,7 @@ InlineMarkup
   / TextEscaped
 
 StandAloneHyperlink
+// PLAN: use decodeURI(t.get('value')) as text node content
   = t:TextEmailAdress
   { return ast(T.StandAloneHyperlink).add(t).set('ref', 'mailto:' + t.get('value')) }
   / t:TextAbsoluteURI
@@ -67,14 +68,8 @@ TextEmailAdress
 // appended an optional fragment
 // https://tools.ietf.org/html/rfc3986#appendix-D.1
 TextAbsoluteURI
-  = s:URIScheme ":" h:URIHierPart q:("?" URIQuery)? f:("#" URIFragment)?
-  {
-    let res = ''
-    res += s + ':' + h
-    if (q) res += q.join('')
-    if (f) res += f.join('')
-    return ast(T.Text).set('value', res)
-  }
+  = a:(URIScheme ":" URIHierPart ("?" URIQuery)? ("#" URIFragment)?)
+  {return ast(T.Text).set('value', flatten(a).join(''))}
 
 URIScheme
   = a:Alpha b:(AlphaNum / "+" / "-" / ".")*
@@ -98,7 +93,8 @@ URIUnreserved
   = AlphaNum / "-" / "." / "_" / "~"
 
 URIPCTEncoded
-  = "%" Hex Hex
+  = t:("%" Hex Hex)
+  { return flatten(t).join('') }
 
 URISubDelims
   = "!" / "$" / "&" / "'" / "(" / ")"
@@ -191,16 +187,15 @@ URIPathEmpty
 
 URIQuery
   = t:(URIPChar / "/" / "?")*
-  {return t.join('')}
-
+  { return flatten(t).join('') }
 URIFragment
   = t:(URIPChar / "/" / "?")*
-  {return t.join('')}
+  { return flatten(t).join('') }
 
 EmbeddedHyperlink
-// TODO embedded URI
-// = !"\\" "`" t:TextInlineLiteral !"\\" "<" t:TextURI !"\\" ">" !"\\" "`__"
-  = !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" r:TextReferenceName !"\\" "_" !"\\" ">" !"\\" "`__"
+  = !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" u:TextAbsoluteURI !"\\" ">" !"\\" "`__"
+  { return ast(T.EmbeddedHyperlink).add(t).set('ref', u.get('value')) }
+  / !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" r:TextReferenceName !"\\" "_" !"\\" ">" !"\\" "`__"
   { return ast(T.EmbeddedHyperlink).add(t).set('name', r.get('value')) }
 
 TextEmbeddedHyperlink
@@ -208,7 +203,6 @@ TextEmbeddedHyperlink
   { return ast(T.Text).set('value', c.join('')) }
 
 CharEmbeddedHyperlink
-  // normalize multiple whitspace to one space
   = "\\<" {return '<'}
   / "\\>" {return '>'}
   //   <     >
@@ -303,7 +297,7 @@ Alpha = [a-zA-Z]
 
 Num = [0-9]
 
-Hex = [0-9a-f]
+Hex = [0-9a-fA-F]
 
 AlphaNum = Alpha / Num
 

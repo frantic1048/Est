@@ -48,7 +48,28 @@ test('with named hyperlink', t => {
   t.true(isMatch(actual, expected), 'should parse embbed named hyperlink')
 })
 
-test.todo('with URI')
+test('with absolute URI', t => {
+  const tracer = t.context.tracer
+  const actual = parse('`香風 智乃<http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB>`__', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.EmbeddedHyperlink,
+        A: { ref: 'http://gochiusa.wikia.com/wiki/Chino_Kaf%C5%AB' },
+        C: [
+          {
+            T: T.Text,
+            A: {
+              value: '香風 智乃'
+            }
+          }
+        ]
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should parse embbed URI hyperlink')
+})
 
 test('escape left angle bracket', t => {
   const tracer = t.context.tracer
