@@ -12,6 +12,7 @@ module.exports = {
   AnonymousHyperlink: Symbol('AnonymousHyperlink'),
   NamedHyperlink: Symbol('NamedHyperlink'),
   EmbeddedHyperlink: Symbol('EmbeddedHyperlink'),
+  StandAloneHyperlink: Symbol('StandAloneHyperlink'),
 
   // text nodes
   Text: Symbol('Text')

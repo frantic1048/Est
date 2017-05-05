@@ -2,6 +2,12 @@
     const unroll = options.util.makeUnroll(location, options)
     const ast = options.util.makeAST(location, options)
     const T = require('./').tokenTypes
+    const flatten = arr => arr.reduce(
+      (acc, val) => acc.concat(
+        Array.isArray(val) ? flatten(val) : val
+      ),
+      []
+    )
 }
 
 Document
@@ -35,7 +41,8 @@ BulletListBullet
 
 
 InlineMarkup
-  = EmbeddedHyperlink
+  = StandAloneHyperlink
+  / EmbeddedHyperlink
   / AnonymousHyperlink
   / NamedHyperlink
   / InlineLiterals
@@ -44,10 +51,152 @@ InlineMarkup
   / Emphasis
   / TextEscaped
 
-// TODO: URI
-// https://www.ietf.org/rfc/rfc2396.txt
-// http://www.rfc-editor.org/rfc/rfc2732.txt
-// URI
+StandAloneHyperlink
+  = t:TextAbsoluteURI
+  { return ast(T.StandAloneHyperlink).add(t).set('ref', t.get('value')) }
+//  / StandAloneEmailAdress
+
+// absolute-URI
+// https://tools.ietf.org/html/rfc3986#appendix-A
+// appended an optional fragment
+// https://tools.ietf.org/html/rfc3986#appendix-D.1
+TextAbsoluteURI
+  = s:URIScheme ":" h:URIHierPart q:("?" URIQuery)? f:("#" URIFragment)?
+  {
+    let res = ''
+    res += s + ':' + h
+    if (q) res += q.join('')
+    if (f) res += f.join('')
+    return ast(T.Text).set('value', res)
+  }
+
+URIScheme
+  = a:Alpha b:(AlphaNum / "+" / "-" / ".")*
+  { return a + b.join('') }
+
+URIHierPart
+  = "//" a:URIAuthority p:URIPathAbempty
+  { return "//" + a + p}
+  / URIPathAbsolute
+  / URIPathRootless
+  / URIPathEmpty
+
+URIAuthority
+  = u:(URIUserInfo "@")? h:URIHost p:(":" URIPort)?
+  {
+    let res = ''
+    if (u) res += u.join('')
+    res += h
+    if (p) res += p.join('')
+    return res
+  }
+
+URIUserInfo
+  = (URIUnreserved / URIPCTEncoded / URISubDelims / ":")*
+
+URIUnreserved
+  = AlphaNum / "-" / "." / "_" / "~"
+
+URIPCTEncoded
+  = "%" Hex Hex
+
+URISubDelims
+  = "!" / "$" / "&" / "'" / "(" / ")"
+  / "*" / "+" / "," / ";" / "="
+
+URIHost
+  = URIIPLiteral / URIIPv4Address / URIRegName
+
+URIIPLiteral
+  = t:("[" (URIIPv6Address / URIIPvFuture) "]")
+  {return t.join('')}
+
+URIIPv6Address
+  = a:(URIIPv6Address1
+  / URIIPv6Address2
+  / URIIPv6Address3
+  / URIIPv6Address4
+  / URIIPv6Address5
+  / URIIPv6Address6
+  / URIIPv6Address7
+  / URIIPv6Address8
+  / URIIPv6Address9)
+  {return flatten(a).join('')}
+
+URIIPv6Address1 = URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URILS32
+URIIPv6Address2 =        "::" URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URILS32
+URIIPv6Address3 = URIH16?          "::" URIH16 ":" URIH16 ":" URIH16 ":" URIH16 ":" URILS32
+URIIPv6Address4 = (URIH16 (":" URIH16)?)?     "::" URIH16 ":" URIH16 ":" URIH16 ":" URILS32
+URIIPv6Address5 = (URIH16 (":" URIH16)? (":" URIH16)?)?  "::" URIH16 ":" URIH16 ":" URILS32
+URIIPv6Address6 = (URIH16 (":" URIH16)? (":" URIH16)? (":" URIH16)?)? "::" URIH16 ":" URILS32
+URIIPv6Address7 = (URIH16 (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)?)? "::" URILS32
+URIIPv6Address8 = (URIH16 (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)?)? "::" URIH16
+URIIPv6Address9 = (URIH16 (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)? (":" URIH16)?)? "::"
+
+URIH16
+  = h:(Hex Hex? Hex? Hex?)
+  {return h.join('')}
+
+URILS32
+  = (URIH16 ":" URIH16)
+  / URIIPv4Address
+
+URIDecOctet
+  = "25" [0-5]    // 250-255
+  / "2" [0-4] Num // 200-249
+  / "1" Num Num   // 100-199
+  / [1-9] Num     // 10-99
+  / Num           // 0-9
+
+URIIPvFuture
+  = "v" Hex+ "." ( URIUnreserved / URISubDelims / ":" )+
+
+URIIPv4Address
+  = a:(URIDecOctet "." URIDecOctet "." URIDecOctet "." URIDecOctet)
+  {return flatten(a).join('')}
+
+URIRegName
+  = t:(URIUnreserved / URIPCTEncoded / URISubDelims)*
+  {return t.join('')}
+
+URIPort
+  = n:Num*
+  {return n.join('')}
+
+URIPathAbempty
+  = t:("/" URISegment)*
+  { return t.map(s => s.join('')).join('') }
+
+URISegment
+  = c:URIPChar*
+  {return c.join('')}
+
+URISegmentNZ
+  = c:URIPChar+
+  {return c.join('')}
+
+URIPChar
+  = URIUnreserved / URIPCTEncoded / URISubDelims / ":" / "@"
+
+URIPathAbsolute
+  = "/" ( URISegmentNZ ("/" URISegment)* )?
+
+URIPathRootless
+  = s:URISegmentNZ ss:("/" URISegment)*
+  {return s + ss.join('')}
+
+URIPathEmpty
+  = ""
+
+URIQuery
+  = t:(URIPChar / "/" / "?")*
+  {return t.join('')}
+
+URIFragment
+  = t:(URIPChar / "/" / "?")*
+  {return t.join('')}
+
+// StandAloneEmailAdress
 
 EmbeddedHyperlink
 // TODO embedded URI
@@ -143,12 +292,21 @@ CharEscaped
   //  CR LF *    `      |     _     [     ]
   / [^\r\n\u002A\u0060\u007c\u005f\u005b\u005d]
 
+// -------------
+// General Rules
+// -------------
+
 NonSpace
   // same as \S in regex
   = [^ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
 
-AlphaNum
-  = [a-zA-Z0-9]
+Alpha = [a-zA-Z]
+
+Num = [0-9]
+
+Hex = [0-9a-f]
+
+AlphaNum = Alpha / Num
 
 BlankLine
   = NewLine NewLine+
