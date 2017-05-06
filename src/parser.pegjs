@@ -45,6 +45,7 @@ InlineMarkup
   / EmbeddedHyperlink
   / AnonymousHyperlink
   / NamedHyperlink
+  / InlineInternalTarget
   / InlineLiterals
   / InterpretedText
   / StrongEmphasis
@@ -238,6 +239,10 @@ CharReferenceName
   / "\\_" {return '_'}
   //   <     >       :     _
   / c:[^\u003c\u003e\u003a\u005f] {return c}
+
+InlineInternalTarget
+  = !"\\" "_`" t:TextInlineLiteral !"\\" "`"
+  {return ast(T.InlineInternalTarget).add(t).set('name', t.get('value'))}
 
 InlineLiterals
   = !"\\" "``"  t:TextInlineLiteral !"\\" "``"

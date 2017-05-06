@@ -1,19 +1,30 @@
 module.exports = {
+  // =============
   // BodyElement
+  // =============
   Paragraph: Symbol('Paragraph'),
   BulletList: Symbol('BulletList'),
   ListItem: Symbol('ListItem'),
 
+  // =============
   // InlineMarkup
+  // =============
   Emphasis: Symbol('Emphasis'),
   StrongEmphasis: Symbol('StrongEmphasis'),
-  InlineLiterals: Symbol('InlineLiterals'),
   InterpretedText: Symbol('InterpretedText'),
+
+  // Literals
+  InlineLiterals: Symbol('InlineLiterals'),
+
+  // Reference
   AnonymousHyperlink: Symbol('AnonymousHyperlink'),
   NamedHyperlink: Symbol('NamedHyperlink'),
   EmbeddedHyperlink: Symbol('EmbeddedHyperlink'),
   StandAloneHyperlink: Symbol('StandAloneHyperlink'),
 
-  // text nodes
+  // Target
+  InlineInternalTarget: Symbol('InlineInternalTarget'),
+
+  // Text
   Text: Symbol('Text')
 }
