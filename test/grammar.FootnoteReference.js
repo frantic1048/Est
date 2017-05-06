@@ -69,3 +69,18 @@ test('auto numbered with label', t => {
   }
   t.true(isMatch(actual, expected), 'should parse footnote reference')
 })
+
+test('auto symbol', t => {
+  const tracer = t.context.tracer
+  const actual = parse('[*]_', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.FootnoteReference,
+        A: { ref: '*' }
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should parse footnote reference')
+})
