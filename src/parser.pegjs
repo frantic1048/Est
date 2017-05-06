@@ -42,11 +42,10 @@ BulletListBullet
 
 InlineMarkup
   = StandAloneHyperlink
-  / EmbeddedHyperlink
+  / InlineInternalTarget
   / AnonymousHyperlink
   / FootnoteReference
   / NamedHyperlink
-  / InlineInternalTarget
   / InlineLiterals
   / InterpretedText
   / StrongEmphasis
@@ -199,47 +198,59 @@ URIFragment
   = t:(URIPChar / "/" / "?")*
   { return flatten(t).join('') }
 
-EmbeddedHyperlink
-  = !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" u:TextAbsoluteURI !"\\" ">" !"\\" "`__"
-  { return ast(T.EmbeddedHyperlink).add(t).set('ref', u.get('value')) }
-  / !"\\" "`" t:TextEmbeddedHyperlink !"\\" "<" r:TextReferenceName !"\\" "_" !"\\" ">" !"\\" "`__"
-  { return ast(T.EmbeddedHyperlink).add(t).set('name', r.get('value')) }
-
-TextEmbeddedHyperlink
-  = c:CharEmbeddedHyperlink+
-  { return ast(T.Text).set('value', c.join('')) }
-
-CharEmbeddedHyperlink
-  = "\\<" {return '<'}
-  / "\\>" {return '>'}
-  //   <     >
-  / c:[^\u003c\u003e] {return c}
-
 AnonymousHyperlink
-  = !"\\" "`" t:TextInlineLiteral !"\\" "`__"
+  // embbed with URI
+  = !"\\" "`" t:EmbeddedHyperlinkLabel u:TextAbsoluteURI ">`__"
+  {
+    const tNode = ast(T.Text).set('value', t)
+    return ast(T.AnonymousHyperlink).add(tNode).set('ref', u.get('value'))
+  }
+  / !"\\" "`" t:TextInlineLiteral !"\\" "`__"
   { return ast(T.AnonymousHyperlink).add(t) }
-  / t:TextReferenceName !"\\" "__"
-  { return ast(T.AnonymousHyperlink).add(t) }
+  / t:AnonymousHyperlinkImplict
+  {
+    const tNode = ast(T.Text).set('value', t)
+    return ast(T.AnonymousHyperlink).add(tNode)
+  }
+
+EmbeddedHyperlinkLabel
+  = t:CharInlineLiteral r:EmbeddedHyperlinkLabel
+  { return t + r }
+  / "<" {return ''}
+
+AnonymousHyperlinkImplict
+  = t:CharReferenceName r:AnonymousHyperlinkImplict
+  {return t + r}
+  / "__" // don't return ending "__"
+  {return ''}
 
 NamedHyperlink
-  = !"\\" "`" t:TextInlineLiteral !"\\" "`_"
+  = !"\\" "`" t:EmbeddedHyperlinkLabel u:NamedHyperlinkReferenceName ">`_"
+  {
+    const tNode = ast(T.Text).set('value', t)
+    return ast(T.NamedHyperlink).add(tNode).set('name', u)
+  }
+  / !"\\" "`" t:TextInlineLiteral !"\\" "`_"
   { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
-  / t:TextReferenceName !"\\" "_"
-  { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
+  / t:NamedHyperlinkImplict
+  {
+    const tNode = ast(T.Text).set('value', t)
+    return ast(T.NamedHyperlink).add(tNode).set('name', t)
+  }
 
-TextReferenceName
-  = c:CharReferenceName+
-  { return ast(T.Text).set('value', c.join('')) }
+NamedHyperlinkReferenceName
+  = t:CharInlineLiteral r:NamedHyperlinkReferenceName
+  { return t + r }
+  / "_" {return ''}
+
+NamedHyperlinkImplict
+  = t:CharReferenceName r:NamedHyperlinkImplict
+  { return t + r}
+  / "_" // don't return ending "_"
+  { return ''}
 
 CharReferenceName
-  // normalize multiple whitspace to one space
-  = c:_+ { return ' '}
-  / "\\<" {return '<'}
-  / "\\>" {return '>'}
-  / "\\:" {return ':'}
-  / "\\_" {return '_'}
-  //   <     >       :     _
-  / c:[^\u003c\u003e\u003a\u005f] {return c}
+  = [a-zA-Z0-9] / "+" / "-" / "_" / "."
 
 InlineInternalTarget
   = !"\\" "_`" t:TextInlineLiteral !"\\" "`"
@@ -264,8 +275,8 @@ InterpretedText
   { return ast(T.InterpretedText).add(t) }
 
 InterpretedTextRole
-  = ":" r:TextReferenceName ":"
-  { return r.get('value')}
+  = ":" r:CharReferenceName+ ":"
+  { return r.join('')}
 
 
 TextInlineLiteral

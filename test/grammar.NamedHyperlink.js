@@ -72,3 +72,26 @@ test('explicit', t => {
   t.true(isMatch(actual, expected),
     'shoulp parse explicit named hyperlink')
 })
+
+test('with named reference', t => {
+  const tracer = t.context.tracer
+  const actual = parse('`香風 智乃<Kafuu Chino_>`_', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.NamedHyperlink,
+        A: { name: 'Kafuu Chino' },
+        C: [
+          {
+            T: T.Text,
+            A: {
+              value: '香風 智乃'
+            }
+          }
+        ]
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should parse embbed URI hyperlink')
+})

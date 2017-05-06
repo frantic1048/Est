@@ -19,7 +19,6 @@ module.exports = {
   // Reference
   AnonymousHyperlink: Symbol('AnonymousHyperlink'),
   NamedHyperlink: Symbol('NamedHyperlink'),
-  EmbeddedHyperlink: Symbol('EmbeddedHyperlink'),
   StandAloneHyperlink: Symbol('StandAloneHyperlink'),
   FootnoteReference: Symbol('FootnoteReference'),
 
