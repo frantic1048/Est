@@ -46,8 +46,7 @@ InlineMarkup
   / AnonymousHyperlink
   / FootnoteReference
   / CitationReference
-// TODO:
-//  / SubstitutionReference
+  / SubstitutionReference
   / NamedHyperlink
   / InlineLiterals
   / InterpretedText
@@ -276,9 +275,27 @@ CitationReferenceName
   { return t + r }
   / "]" {return ''}
 
-// TODO
-// SubstitutionReference
+SubstitutionReference
+  // substitution as AnonymousHyperlink
+  = !"\\" "|" t:SubstitutionReferenceName "__"
+  {
+    const sNode = ast(T.SubstitutionReference).set('name', t)
+    return ast(T.AnonymousHyperlink).add(sNode)
+  }
+  // substitution as NamedHyperlink
+  / !"\\" "|" t:SubstitutionReferenceName "_"
+  {
+    const sNode = ast(T.SubstitutionReference).set('name', t)
+    return ast(T.NamedHyperlink).add(sNode).set('name', t)
+  }
+  // normal substitution
+  / !"\\" "|" t:SubstitutionReferenceName
+  { return ast(T.SubstitutionReference).set('name', t) }
 
+SubstitutionReferenceName
+  = t:CharReferenceName r:SubstitutionReferenceName
+  { return t + r }
+  / "|" {return ''}
 
 InterpretedText
   = r:InterpretedTextRole !"\\" "`"  t:TextInlineLiteral !"\\" "`"
