@@ -21,6 +21,7 @@ module.exports = {
   NamedHyperlink: Symbol('NamedHyperlink'),
   EmbeddedHyperlink: Symbol('EmbeddedHyperlink'),
   StandAloneHyperlink: Symbol('StandAloneHyperlink'),
+  FootnoteReference: Symbol('FootnoteReference'),
 
   // Target
   InlineInternalTarget: Symbol('InlineInternalTarget'),

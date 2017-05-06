@@ -44,6 +44,7 @@ InlineMarkup
   = StandAloneHyperlink
   / EmbeddedHyperlink
   / AnonymousHyperlink
+  / FootnoteReference
   / NamedHyperlink
   / InlineInternalTarget
   / InlineLiterals
@@ -247,6 +248,10 @@ InlineInternalTarget
 InlineLiterals
   = !"\\" "``"  t:TextInlineLiteral !"\\" "``"
   { return ast(T.InlineLiterals).add(t) }
+
+FootnoteReference
+  = !"\\" "["  t:(Num+ / "*" / "#" (AlphaNum / "-")* ) !"\\" "]_"
+  { return ast(T.FootnoteReference).set('ref', flatten([t]).join('')) }
 
 InterpretedText
   = r:InterpretedTextRole !"\\" "`"  t:TextInlineLiteral !"\\" "`"
