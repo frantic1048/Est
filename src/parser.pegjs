@@ -45,6 +45,9 @@ InlineMarkup
   / InlineInternalTarget
   / AnonymousHyperlink
   / FootnoteReference
+  / CitationReference
+// TODO:
+//  / SubstitutionReference
   / NamedHyperlink
   / InlineLiterals
   / InterpretedText
@@ -263,6 +266,19 @@ InlineLiterals
 FootnoteReference
   = !"\\" "["  t:(Num+ / "*" / "#" (AlphaNum / "-")* ) !"\\" "]_"
   { return ast(T.FootnoteReference).set('ref', flatten([t]).join('')) }
+
+CitationReference
+  = !"\\" "[" t:CitationReferenceName "_"
+  { return ast(T.CitationReference).set('name', t) }
+
+CitationReferenceName
+  = t:CharReferenceName r:CitationReferenceName
+  { return t + r }
+  / "]" {return ''}
+
+// TODO
+// SubstitutionReference
+
 
 InterpretedText
   = r:InterpretedTextRole !"\\" "`"  t:TextInlineLiteral !"\\" "`"
