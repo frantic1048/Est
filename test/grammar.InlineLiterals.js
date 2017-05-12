@@ -46,7 +46,7 @@ test('normal', t => {
 test('sequence', t => {
   const tracer = t.context.tracer
   const actual = parse(
-    '``inline literals````inline literals``',
+    '``inline literals`` ``inline literals``',
     {tracer})
   const expected = {
     ast: [{

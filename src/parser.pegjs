@@ -8,6 +8,12 @@
       ),
       []
     )
+    const astyFilter  = elt => {
+      return (typeof elt === 'object')
+        && (elt !== null)
+        && (elt.ASTy === true)
+    }
+
 }
 
 Document
@@ -23,8 +29,11 @@ BodyElement
   / Paragraph
 
 Paragraph
-  = i:InlineMarkup+ ii:(NewLine InlineMarkup+)*
-  { return ast(T.Paragraph).add(i).add(ii.reduce((arr, v) => arr.concat(v[1]), [])) }
+  = a:(InlineMarkups (NewLine InlineMarkups)*)
+  {
+    return ast(T.Paragraph)
+      .add(flatten(a).filter(astyFilter))
+  }
 
 BulletList
   = b:ListItem bb:(BlankLine ListItem)*
@@ -35,12 +44,47 @@ ListItem
   { return ast(T.ListItem).add(i) }
 
 BulletListBullet
-  = [*+-‧‣⁃]
+  = [*+\-‧‣⁃]
 
 
 
+InlineMarkups
+  = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
+  {
+    const nodes = flatten(a).filter(astyFilter)
+    const mergedNodes = []
 
-InlineMarkup
+    // merge continuous Text node
+
+    // not node
+    const nn = {T: false}
+
+    // previousNode
+    let pn = nn
+
+    for (const n of nodes) {
+      if (n.T === T.Text) {
+        if (pn.T === T.Text) {
+          const npn = ast(T.Text).set('value',
+            pn.get('value') + n.get('value')
+          )
+          pn = npn
+        } else {
+          pn = n
+        }
+      } else { // n.T !== T.Text
+        if (pn.T === T.Text) { mergedNodes.push(pn) }
+        mergedNodes.push(n)
+        pn = nn
+      }
+    }
+
+    if (pn.T === T.Text) mergedNodes.push(pn)
+
+    return mergedNodes
+  }
+
+InlineMarkupFirst
   = StandAloneHyperlink
   / InlineInternalTarget
   / AnonymousHyperlink
@@ -52,7 +96,16 @@ InlineMarkup
   / InterpretedText
   / StrongEmphasis
   / Emphasis
-  / TextEscaped
+
+InlineMarkupNonFirst
+  = "\\ " m:InlineMarkupFirst {return m}
+  / _ InlineMarkupFirst
+  / "\\ " m:TextInline {return m}
+  / _ TextInline
+  / TextInline
+
+TextInline
+  = c:[^\r\n \\]+ {return ast(T.Text).set('value', c.join(''))}
 
 StandAloneHyperlink
   = t:TextEmailAdress
@@ -364,8 +417,11 @@ BlankLine
   = NewLine NewLine+
 
 NewLine
-  = "\r\n" / "\r" / "\n"
+  = "\r\n" / "\r" / "\n" {return}
 
 // whitspace
-_
+
+_ = " " {return ast(T.Text).set('value', ' ')}
+
+___
   = [ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]

@@ -46,7 +46,7 @@ test('normal', t => {
 test('sequence', t => {
   const tracer = t.context.tracer
   const actual = parse(
-    '**strongemphasis****strongemphasis**',
+    '**strongemphasis** **strongemphasis**',
     {tracer})
   const expected = {
     ast: [{

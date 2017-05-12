@@ -61,15 +61,15 @@ test('escape', t => {
   t.true(isMatch(actual, expected), 'should recognize escape')
 })
 
-test('outer escape', t => {
+test('spacing', t => {
   const tracer = t.context.tracer
-  const actual = parse('\\**emph\\*sis*\\*', {tracer})
+  const actual = parse('ah* *emph\\*sis* *oh', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
       C: [{
         T: T.Text,
-        A: { value: '*' }
+        A: { value: 'ah* ' }
       }, {
         T: T.Emphasis,
         C: [{
@@ -78,9 +78,57 @@ test('outer escape', t => {
         }]
       }, {
         T: T.Text,
-        A: { value: '*' }
+        A: { value: ' *oh' }
       }]
     }]
   }
-  t.true(isMatch(actual, expected), 'should recognize outer escape')
+  t.true(isMatch(actual, expected), 'should recognize keep spaces')
+})
+
+test('spacing escape both side', t => {
+  const tracer = t.context.tracer
+  const actual = parse('ah*\\ *emph\\*sis*\\ *oh', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.Text,
+        A: { value: 'ah*' }
+      }, {
+        T: T.Emphasis,
+        C: [{
+          T: T.Text,
+          A: { value: 'emph*sis' }
+        }]
+      }, {
+        T: T.Text,
+        A: { value: '*oh' }
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should recognize escaped space')
+})
+
+test('spacing escape one side', t => {
+  const tracer = t.context.tracer
+  const actual = parse('ah*\\ *emph\\*sis* *oh', {tracer})
+  const expected = {
+    ast: [{
+      T: T.Paragraph,
+      C: [{
+        T: T.Text,
+        A: { value: 'ah*' }
+      }, {
+        T: T.Emphasis,
+        C: [{
+          T: T.Text,
+          A: { value: 'emph*sis' }
+        }]
+      }, {
+        T: T.Text,
+        A: { value: ' *oh' }
+      }]
+    }]
+  }
+  t.true(isMatch(actual, expected), 'should recognize escaped space')
 })
