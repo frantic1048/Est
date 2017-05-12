@@ -3,6 +3,7 @@ module.exports = {
   // BodyElement
   // =============
   Paragraph: Symbol('Paragraph'),
+  Transition: Symbol('Transition'),
   BulletList: Symbol('BulletList'),
   ListItem: Symbol('ListItem'),
 

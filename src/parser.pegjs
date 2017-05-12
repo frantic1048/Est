@@ -22,10 +22,46 @@ Document
   { return unroll(b, bb, 1)}
 
 
-
+Transition
+// POSIX Character Class [:punct:]
+// https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
+  =("!!!!" "!"*
+  / "\"\"\"\"" "\""*
+  / "####" "#"*
+  / "$$$$" "$"*
+  / "%%%%" "%"*
+  / "&&&&" "&"*
+  / "''''" "'"*
+  / "((((" "("*
+  / "))))" ")"*
+  / "****" "*"*
+  / "++++" "+"*
+  / ",,,," ","*
+  / "----" "-"*
+  / "...." "."*
+  / "////" "/"*
+  / "::::" ":"*
+  / ";;;;" ";"*
+  / "<<<<" "<"*
+  / "====" "="*
+  / ">>>>" ">"*
+  / "????" "?"*
+  / "@@@@" "@"*
+  / "[[[[" "["*
+  / "\\\\\\\\" "\\"*
+  / "]]]]" "]"*
+  / "^^^^" "^"*
+  / "____" "_"*
+  / "````" "`"*
+  / "{{{{" "{"*
+  / "||||" "|"*
+  / "}}}}" "}"*
+  / "~~~~" "~"*)
+  {return ast(T.Transition)}
 
 BodyElement
-  = BulletList
+  = Transition
+  / BulletList
   / Paragraph
 
 Paragraph
@@ -425,6 +461,6 @@ NewLine
 _ = " " {return ast(T.Text).set('value', ' ')}
 
 
-// NOTE: not used yet
+// FIXME: not used yet
 ___
   = [ \f\n\r\t\v\u00a0\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
