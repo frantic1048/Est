@@ -105,7 +105,11 @@ InlineMarkupNonFirst
   / TextInline
 
 TextInline
-  = c:[^\r\n \\]+ {return ast(T.Text).set('value', c.join(''))}
+  = c:CharTextInline+ {return ast(T.Text).set('value', c.join(''))}
+
+CharTextInline
+  = "\\\\" {return '\\'}
+  / [^\r\n \\]
 
 StandAloneHyperlink
   = t:TextEmailAdress
@@ -375,27 +379,23 @@ CharInlineLiteral
   / [^\r\n\u0060]
 
 StrongEmphasis
-  = !"\\" "**" t:TextEscaped !"\\" "**"
+  = !"\\" "**" t:TextEmphasis !"\\" "**"
   { return ast(T.StrongEmphasis).add(t) }
 
 Emphasis
-  = !"\\" "*" t:TextEscaped !"\\" "*"
+  = !"\\" "*" t:TextEmphasis !"\\" "*"
   { return ast(T.Emphasis).add(t) }
 
-TextEscaped
-  = c:CharEscaped+
+TextEmphasis
+  = c:CharEmphasis+
   { return ast(T.Text).set('value', c.join('')) }
 
-CharEscaped
-  = "\\\\" { return "\\"}
-  / "\\*"  { return "\*"}
-  / "\\`"  { return "`"}
-  / "\\|"  { return "|"}
-  / "\\_"  { return "_"}
-  / "\\["  { return "["}
-  / "\\]"  { return "]"}
-  //  CR LF *    `      |     _     [     ]
-  / [^\r\n\u002A\u0060\u007c\u005f\u005b\u005d]
+CharEmphasis
+  = "\\\\" {return '\\'}
+  / "\\*" {return '*'}
+  //  CR LF *
+  / [^\r\n\u002A]
+
 
 // -------------
 // General Rules

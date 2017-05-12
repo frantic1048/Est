@@ -45,7 +45,7 @@ test('normal', t => {
 
 test('escape', t => {
   const tracer = t.context.tracer
-  const actual = parse('*emph\\*sis*', {tracer})
+  const actual = parse('*em\\\\p`h\\*sis*', {tracer})
   const expected = {
     ast: [{
       T: T.Paragraph,
@@ -53,7 +53,7 @@ test('escape', t => {
         T: T.Emphasis,
         C: [{
           T: T.Text,
-          A: { value: 'emph*sis' }
+          A: { value: 'em\\p`h*sis' }
         }]
       }]
     }]
