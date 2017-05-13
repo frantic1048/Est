@@ -3,6 +3,12 @@
     const ast = options.util.makeAST(location, options)
     const T = require('./').tokenTypes
 
+    // manage indent state
+    const indents = [0]
+    const indent = (i = 2) => indents.push(i)
+    const dedent = () => indents.pop()
+    const indentLevel = () => indents.reduce((sum, elt) => sum + elt)
+
     // flatten nested array
     const flatten = arr => arr.reduce(
       (acc, val) => acc.concat(
@@ -54,11 +60,30 @@
 
 Document
 // contains block level token
-  = b:BodyElement bb:(BlankLine BodyElement)*
-  { return unroll(b, bb, 1)}
+  = b:BodyElement bb:(BlankLine BodyElement)* NewLine*
+  {return unroll(b, bb, 1)}
 
+BodyElement "BodyElement"
+  = Transition
+  / BulletList
+  / Paragraph
 
-Transition
+Samedent
+  = spaces:" "* &{return spaces.length === indentLevel()}
+
+Moredent
+  = spaces:" "* &{return spaces.length > indentLevel()}
+
+Indent
+// default indent: 2 space
+// for other indent length,
+// manually write assertion like this
+  = &{indent(2); return true}
+
+Dedent
+  = &{dedent(); return true}
+
+Transition "Transition"
 // NOTE: semantic: Document or section may not
 //     start/end with Transition
 // POSIX Character Class [:punct:]
@@ -97,33 +122,32 @@ Transition
   / "~~~~" "~"*)
   {return ast(T.Transition)}
 
-BodyElement
-  = Transition
-  / BulletList
-  / Paragraph
 
-Paragraph
-  = a:(InlineMarkups (NewLine InlineMarkups)*)
+Paragraph "Paragraph"
+  = a:(InlineMarkups (NewLine Samedent InlineMarkups)*)
   {
     return ast(T.Paragraph)
       .add(mergeContinuousTextNodes(flatten(a).filter(astyFilter)))
   }
 
-BulletList
+BulletList "BulletList"
   = b:ListItem bb:(BlankLine? ListItem)*
   { return ast(T.BulletList).add(unroll(b, bb, 1)) }
 
-ListItem
-  = BulletListBullet _ i:BodyElement
-  { return ast(T.ListItem).add(i) }
+ListItem "ListItem"
+  = BulletListBullet _
+    Indent i:(BodyElement)
+      ii:(BlankLine Samedent BodyElement)*
+    Dedent
+  { return ast(T.ListItem).add(i).add(flatten(ii).filter(astyFilter)) }
 
-BulletListBullet
+BulletListBullet "BulletListBullet"
   // *      +      -    ‧    ‣     ⁃
   = [\u002A\u002B\u002D\u2027\u2023\u2043]
 
 
 
-InlineMarkups
+InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
   {
     const nodes = flatten(a).filter(astyFilter)
@@ -151,14 +175,14 @@ InlineMarkupNonFirst
   / _ TextInline
   / TextInline
 
-TextInline
+TextInline "TextInline"
   = c:CharTextInline+ {return ast(T.Text).set('value', c.join(''))}
 
 CharTextInline
   = "\\\\" {return '\\'}
   / [^\r\n \\]
 
-StandAloneHyperlink
+StandAloneHyperlink "StandAloneHyperlink"
   = t:TextEmailAdress
   { return ast(T.StandAloneHyperlink).add(t).set('ref', 'mailto:' + t.get('value')) }
   / t:TextAbsoluteURI
@@ -171,7 +195,7 @@ StandAloneHyperlink
   }
 
 // URIAuthority without URIPort
-TextEmailAdress
+TextEmailAdress "TextEmailAdress"
   = a:(URIUserInfo "@" URIHost)
   {return ast(T.Text).set('value',(flatten(a).join('')))}
 
@@ -179,7 +203,7 @@ TextEmailAdress
 // https://tools.ietf.org/html/rfc3986#appendix-A
 // appended an optional fragment
 // https://tools.ietf.org/html/rfc3986#appendix-D.1
-TextAbsoluteURI
+TextAbsoluteURI "TextAbsoluteURI"
   = a:(URIScheme ":" URIHierPart ("?" URIQuery)? ("#" URIFragment)?)
   {return ast(T.Text).set('value', flatten(a).join(''))}
 
@@ -304,7 +328,7 @@ URIFragment
   = t:(URIPChar / "/" / "?")*
   { return flatten(t).join('') }
 
-AnonymousHyperlink
+AnonymousHyperlink "AnonymousHyperlink"
   // embbed with URI
   = !"\\" "`" t:EmbeddedHyperlinkLabel u:TextAbsoluteURI ">`__"
   {
@@ -330,7 +354,7 @@ AnonymousHyperlinkImplict
   / "__" // don't return ending "__"
   {return ''}
 
-NamedHyperlink
+NamedHyperlink "NamedHyperlink"
   = !"\\" "`" t:EmbeddedHyperlinkLabel u:NamedHyperlinkReferenceName ">`_"
   {
     const tNode = ast(T.Text).set('value', t)
@@ -358,19 +382,19 @@ NamedHyperlinkImplict
 CharReferenceName
   = [a-zA-Z0-9] / "+" / "-" / "_" / "."
 
-InlineInternalTarget
+InlineInternalTarget "InlineInternalTarget"
   = !"\\" "_`" t:TextInlineLiteral !"\\" "`"
   {return ast(T.InlineInternalTarget).add(t).set('name', t.get('value'))}
 
-InlineLiterals
+InlineLiterals "InlineLiterals"
   = !"\\" "``"  t:TextInlineLiteral !"\\" "``"
   { return ast(T.InlineLiterals).add(t) }
 
-FootnoteReference
+FootnoteReference "FootnoteReference"
   = !"\\" "["  t:(Num+ / "*" / "#" (AlphaNum / "-")* ) !"\\" "]_"
   { return ast(T.FootnoteReference).set('ref', flatten([t]).join('')) }
 
-CitationReference
+CitationReference "CitationReference"
   = !"\\" "[" t:CitationReferenceName "_"
   { return ast(T.CitationReference).set('name', t) }
 
@@ -401,7 +425,7 @@ SubstitutionReferenceName
   { return t + r }
   / "|" {return ''}
 
-InterpretedText
+InterpretedText "InterpretedText"
   = r:InterpretedTextRole !"\\" "`"  t:TextInlineLiteral !"\\" "`"
   { return ast(T.InterpretedText).add(t).set('role', r)}
 
@@ -425,11 +449,11 @@ CharInlineLiteral
   //  CR LF `
   / [^\r\n\u0060]
 
-StrongEmphasis
+StrongEmphasis "StrongEmphasis"
   = !"\\" "**" t:TextEmphasis !"\\" "**"
   { return ast(T.StrongEmphasis).add(t) }
 
-Emphasis
+Emphasis "Emphasis"
   = !"\\" "*" t:TextEmphasis !"\\" "*"
   { return ast(T.Emphasis).add(t) }
 
