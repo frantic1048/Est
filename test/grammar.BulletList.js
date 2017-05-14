@@ -25,12 +25,12 @@ test.afterEach.always('', t => {
   }
 })
 
-test('normal', t => {
+// FIXME
+test('single line', t => {
   const tracer = t.context.tracer
   const actual = parse(`- item1
 
 - item2
-
 - item3`, {tracer})
   const expected = {
     ast: [

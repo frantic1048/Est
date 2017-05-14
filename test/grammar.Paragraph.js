@@ -42,10 +42,7 @@ p22`, {tracer})
       T: T.Paragraph,
       C: [{
         T: T.Text,
-        A: { value: 'p21' }
-      }, {
-        T: T.Text,
-        A: { value: 'p22' }
+        A: { value: 'p21p22' }
       }]
     }]
   }

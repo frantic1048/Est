@@ -2,16 +2,52 @@
     const unroll = options.util.makeUnroll(location, options)
     const ast = options.util.makeAST(location, options)
     const T = require('./').tokenTypes
+
+    // flatten nested array
     const flatten = arr => arr.reduce(
       (acc, val) => acc.concat(
         Array.isArray(val) ? flatten(val) : val
       ),
       []
     )
+
+    // filter valid ASTy node
     const astyFilter  = elt => {
       return (typeof elt === 'object')
         && (elt !== null)
         && (elt.ASTy === true)
+    }
+
+    // merge continuous Text node
+    const mergeContinuousTextNodes = nodes => {
+      const mergedNodes = []
+
+      // not node
+      const nn = {T: false}
+
+      // previousNode
+      let pn = nn
+
+      for (const n of nodes) {
+        if (n.T === T.Text) {
+          if (pn.T === T.Text) {
+            const npn = ast(T.Text).set('value',
+              pn.get('value') + n.get('value')
+            )
+            pn = npn
+          } else {
+            pn = n
+          }
+        } else { // n.T !== T.Text
+          if (pn.T === T.Text) { mergedNodes.push(pn) }
+          mergedNodes.push(n)
+          pn = nn
+        }
+      }
+
+      if (pn.T === T.Text) mergedNodes.push(pn)
+
+      return mergedNodes
     }
 
 }
@@ -23,6 +59,8 @@ Document
 
 
 Transition
+// NOTE: semantic: Document or section may not
+//     start/end with Transition
 // POSIX Character Class [:punct:]
 // https://www.gnu.org/software/grep/manual/html_node/Character-Classes-and-Bracket-Expressions.html
   =("!!!!" "!"*
@@ -68,11 +106,11 @@ Paragraph
   = a:(InlineMarkups (NewLine InlineMarkups)*)
   {
     return ast(T.Paragraph)
-      .add(flatten(a).filter(astyFilter))
+      .add(mergeContinuousTextNodes(flatten(a).filter(astyFilter)))
   }
 
 BulletList
-  = b:ListItem bb:(BlankLine ListItem)*
+  = b:ListItem bb:(BlankLine? ListItem)*
   { return ast(T.BulletList).add(unroll(b, bb, 1)) }
 
 ListItem
@@ -89,35 +127,7 @@ InlineMarkups
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
   {
     const nodes = flatten(a).filter(astyFilter)
-    const mergedNodes = []
-
-    // merge continuous Text node
-
-    // not node
-    const nn = {T: false}
-
-    // previousNode
-    let pn = nn
-
-    for (const n of nodes) {
-      if (n.T === T.Text) {
-        if (pn.T === T.Text) {
-          const npn = ast(T.Text).set('value',
-            pn.get('value') + n.get('value')
-          )
-          pn = npn
-        } else {
-          pn = n
-        }
-      } else { // n.T !== T.Text
-        if (pn.T === T.Text) { mergedNodes.push(pn) }
-        mergedNodes.push(n)
-        pn = nn
-      }
-    }
-
-    if (pn.T === T.Text) mergedNodes.push(pn)
-
+    const mergedNodes = mergeContinuousTextNodes(nodes)
     return mergedNodes
   }
 
