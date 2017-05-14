@@ -131,3 +131,93 @@ test('end with extra NewLine', t => {
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
 })
+
+test('cascading sublist', t => {
+  const tracer = t.context.tracer
+  const actual = parse(`- 1.1
+
+  - 1.2.1
+
+  - 1.2.2
+
+    - 1.2.2.1
+
+- 2.1`, {tracer})
+  const expected = {
+    ast: [{
+      T: T.BulletList,
+      C: [
+        {
+          T: T.ListItem,
+          C: [
+            {T: T.Paragraph},
+            {
+              T: T.BulletList,
+              C: [
+                {T: T.ListItem},
+                {
+                  T: T.ListItem,
+                  C: [{
+                    T: T.BulletList,
+                    C: [{T: T.ListItem}]
+                  }]
+                }
+              ]
+            }]
+        },
+        {
+          T: T.ListItem
+        }]
+    }]
+  }
+  t.true(isMatch(actual, expected),
+    'should parse a BulletList with items')
+})
+
+test('optional NewLine between items', t => {
+  const tracer = t.context.tracer
+  const actual = parse(`- 1.1
+- 2.1`, {tracer})
+  const expected = {
+    ast: [{
+      T: T.BulletList,
+      C: [
+        {
+          T: T.ListItem,
+          C: [{T: T.Paragraph}]
+        },
+        {
+          T: T.ListItem,
+          C: [{T: T.Paragraph}]
+        }]
+    }]
+  }
+  t.true(isMatch(actual, expected),
+    'should parse a BulletList with items')
+})
+
+test('many extra NewLine between items', t => {
+  const tracer = t.context.tracer
+  const actual = parse(`- 1.1
+
+
+
+
+- 2.1`, {tracer})
+  const expected = {
+    ast: [{
+      T: T.BulletList,
+      C: [
+        {
+          T: T.ListItem,
+          C: [{T: T.Paragraph}]
+        },
+        {
+          T: T.ListItem,
+          C: [{T: T.Paragraph}]
+        }]
+    }]
+  }
+  t.true(isMatch(actual, expected),
+    'should parse a BulletList with items')
+})

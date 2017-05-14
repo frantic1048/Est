@@ -131,8 +131,8 @@ Paragraph "Paragraph"
   }
 
 BulletList "BulletList"
-  = b:ListItem bb:(BlankLine? ListItem)*
-  { return ast(T.BulletList).add(unroll(b, bb, 1)) }
+  = b:ListItem bb:(NewLine NewLine* Samedent ListItem)*
+  { return ast(T.BulletList).add(unroll(b, bb, 3)) }
 
 ListItem "ListItem"
   = BulletListBullet _
