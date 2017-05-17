@@ -4,10 +4,17 @@
     const T = require('./').tokenTypes
 
     // manage indent state
+    // ONLY call indent() in &{} predicate,
+
+    // for dynamic indent(like EnumeratedList):
+    //    call setIndentPlaceholder() in a rule
+    //    which followed by IndentPlaceholder
     const indents = [0]
     const indent = (i = 2) => indents.push(i)
     const dedent = () => indents.pop()
     const indentLevel = () => indents.reduce((sum, elt) => sum + elt)
+    let indentPlaceholder = 0
+    const setIndentPlaceholder = v => indentPlaceholder = v
 
     // flatten nested array
     const flatten = arr => arr.reduce(
@@ -65,6 +72,7 @@ Document
 
 BodyElement "BodyElement"
   = Transition
+  / EnumeratedList
   / BulletList
   / Paragraph
 
@@ -73,6 +81,9 @@ Samedent
 
 Moredent
   = spaces:" "* &{return spaces.length > indentLevel()}
+
+IndentPlaceholder
+  = &{indent(indentPlaceholder); return  true}
 
 Indent
 // default indent: 2 space
@@ -131,21 +142,120 @@ Paragraph "Paragraph"
   }
 
 BulletList "BulletList"
-  = b:ListItem bb:(NewLine NewLine* Samedent ListItem)*
+  = b:BulletListItem bb:(NewLine NewLine* Samedent BulletListItem)*
   { return ast(T.BulletList).add(unroll(b, bb, 3)) }
 
-ListItem "ListItem"
+BulletListItem "BulletListItem"
   = BulletListBullet _
-    Indent i:(BodyElement)
-      ii:(BlankLine Samedent BodyElement)*
+    Indent     // fixed 2 space indent
+      i:ListItem
     Dedent
+    {return i}
+
+
+ListItem "ListItem"
+  = i:(BodyElement)
+    ii:(BlankLine Samedent BodyElement)*
   { return ast(T.ListItem).add(i).add(flatten(ii).filter(astyFilter)) }
 
 BulletListBullet "BulletListBullet"
   // *      +      -    ‧    ‣     ⁃
   = [\u002A\u002B\u002D\u2027\u2023\u2043]
 
+EnumeratedList
+  = i:EnumeratedListItemFirst
+    ii:(NewLine NewLine* Samedent EnumeratedListItem)*
+  {
+    const l = ast(T.EnumeratedList)
+      .set('style', i.style)
+      .add(unroll(i.item, ii, 3))
+    return l
+  }
 
+EnumeratedListItemFirst
+= t:EnumeratedListEnumeratorFirst _
+  IndentPlaceholder
+    i:ListItem
+  Dedent
+  {
+    return {
+      style: t,
+      item: i
+    }
+  }
+
+EnumeratedListItem
+  = EnumeratedListEnumerator _
+    IndentPlaceholder
+      i:ListItem
+    Dedent
+    {return i}
+
+// t: enumerator type
+// prefix: enumerator prefix
+// suffix: enumerator suffix
+EnumeratedListEnumeratorFirst
+  = "(" a:Num+ ")"       {
+    setIndentPlaceholder(a.length + 3)
+    return {t:'arabic_num', prefix: '(', suffix: ')'}
+  }
+  / a:Num+ p:[.)]        {
+    setIndentPlaceholder(a.length + 2)
+    return {t:'arabic_num', suffix: p}
+  }
+  / "(" "I" ")"          {
+    setIndentPlaceholder(4)
+    return {t: 'uppercase_roman_num', prefix: '(', suffix: ')'}
+  }
+  / "(" a:[IVXLCDM]+ ")" {
+    setIndentPlaceholder(a.length + 3)
+    return {t: 'uppercase_roman_num', prefix: '(', suffix: ')'}
+  }
+  / "I" p:[.)]           {
+    setIndentPlaceholder(3)
+    return {t: 'uppercase_roman_num', suffix: p}
+  }
+  / a:[IVXLCDM]+ p:[.)]  {
+    setIndentPlaceholder(a.length + 2)
+    return {t: 'uppercase_roman_num', suffix: p}
+  }
+  / "(" "i" ")"          {
+    setIndentPlaceholder(4)
+    return {t: 'lowercase_roman_num', prefix: '(', suffix: ')'}
+  }
+  / "(" a:[ivxlcdm]+ ")" {
+    setIndentPlaceholder(a.length + 3)
+    return {t: 'lowercase_roman_num', prefix: '(', suffix: ')'}
+  }
+  / "i" p:[.)]           {
+    setIndentPlaceholder(3)
+    return {t: 'lowercase_roman_num', suffix: p}
+  }
+  / a:[ivxlcdm]+ p:[.)]  {
+    setIndentPlaceholder(a.length + 2)
+    return {t: 'lowercase_roman_num', suffix: p}
+  }
+  / "(" a:[A-Z]+ ")"     {
+    setIndentPlaceholder(a.length + 3)
+    return {t: 'uppercase_alpha', prefix: '(', suffix: ')'}
+  }
+  / a:[A-Z]+ p:[.)]      {
+    setIndentPlaceholder(a.length + 2)
+    return {t: 'uppercase_alpha', suffix: p}
+  }
+  / "(" a:[a-z]+ ")"     {
+    setIndentPlaceholder(a.length + 3)
+    return {t: 'lowercase_alpha', prefix: '(', suffix: ')'}
+  }
+  / a:[a-z]+ p:[.)]      {
+    setIndentPlaceholder(a.length + 2)
+    return {t: 'lowercase_alpha', suffix: p}
+  }
+
+EnumeratedListEnumerator
+  = "(" a:AlphaNum+ ")" {setIndentPlaceholder(a.length + 3)}
+  / a:AlphaNum+ ")"     {setIndentPlaceholder(a.length + 2)}
+  / a:AlphaNum+ "."     {setIndentPlaceholder(a.length + 2)}
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)

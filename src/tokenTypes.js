@@ -5,6 +5,7 @@ module.exports = {
   Paragraph: Symbol('Paragraph'),
   Transition: Symbol('Transition'),
   BulletList: Symbol('BulletList'),
+  EnumeratedList: Symbol('EnumeratedList'),
   ListItem: Symbol('ListItem'),
 
   // =============
