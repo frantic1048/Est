@@ -74,6 +74,7 @@ BodyElement "BodyElement"
   = Transition
   / EnumeratedList
   / BulletList
+  / FieldList
   / DefinitionList
   / Paragraph
 
@@ -289,8 +290,8 @@ DefinitionListClassifier
 
 DefinitionListDefinition
   = i:BodyElement
-    ii:(BlankLine Samedent BodyElement)*
-  { return ast(T.DefinitionListDefinition).add(unroll(i, ii, 2)) }
+    ii:(BlankLine NewLine* Samedent BodyElement)*
+  { return ast(T.DefinitionListDefinition).add(unroll(i, ii, 3)) }
 
 // InlineMarkups(DefinitionListTerm)
 InlineMarkupsDLT
@@ -316,8 +317,64 @@ TextInlineDLT
 
 CharTextInlineDLT
   = "\\\\" {return '\\'}
+  / "\\:"  {return ':'}
   // CR LF SPACE \    :
   / [^\r\n\u0020\u005c\u003a]
+
+FieldList
+  = f:Field ff:(NewLine NewLine* Field)*
+  {return ast(T.FieldList).add(unroll(f, ff, 2))}
+
+Field
+  = n:FieldName
+    Indent
+      _ e:BodyElement
+      ee:(BlankLine NewLine* Samedent BodyElement)*
+    Dedent
+  {
+    const fBody = ast(T.FieldBody).add(unroll(e, ee, 3))
+    return ast(T.Field).add([n, fBody])
+  }
+
+FieldName
+  = ":" i:InlineMarkupsFN ":"
+  {return ast(T.FieldName).add(i)}
+
+// InlineMarkups(FieldName)
+InlineMarkupsFN
+  = a:((InlineMarkupFirstFN / TextInlineDLT)
+        InlineMarkupNonFirstFN*)
+  {
+    const nodes = flatten(a).filter(astyFilter)
+    const mergedNodes = mergeContinuousTextNodes(nodes)
+    return mergedNodes
+  }
+
+InlineMarkupFirstFN
+// MEMO:
+// InlineMarkupFirst rule
+//   without StandAloneHyperlink
+//   for disambiguation
+// this could be better to make
+//   StandAloneHyperlink rule
+//   not eager with ":"
+  = InlineInternalTarget
+  / AnonymousHyperlink
+  / FootnoteReference
+  / CitationReference
+  / SubstitutionReference
+  / NamedHyperlink
+  / InlineLiterals
+  / InterpretedText
+  / StrongEmphasis
+  / Emphasis
+
+InlineMarkupNonFirstFN
+  = "\\ " m:InlineMarkupFirstFN {return m}
+  / _ InlineMarkupFirstFN
+  / "\\ " m:TextInlineDLT {return m}
+  / _ TextInlineDLT
+  / TextInlineDLT
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)

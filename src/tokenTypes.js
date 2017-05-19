@@ -7,11 +7,19 @@ module.exports = {
   BulletList: Symbol('BulletList'),
   EnumeratedList: Symbol('EnumeratedList'),
   ListItem: Symbol('ListItem'),
+
+  // DefinitionList
   DefinitionList: Symbol('DefinitionList'),
   DefinitionListItem: Symbol('DefinitionListItem'),
   DefinitionListTerm: Symbol('DefinitionListTerm'),
   DefinitionListClassifier: Symbol('DefinitionListClassifier'),
   DefinitionListDefinition: Symbol('DefinitionListDefinition'),
+
+  // FieldList
+  FieldList: Symbol('FieldList'),
+  Field: Symbol('Field'),
+  FieldName: Symbol('FieldName'),
+  FieldBody: Symbol('FieldBody'),
 
   // =============
   // InlineMarkup
