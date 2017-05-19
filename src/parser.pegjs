@@ -74,6 +74,7 @@ BodyElement "BodyElement"
   = Transition
   / EnumeratedList
   / BulletList
+  / DefinitionList
   / Paragraph
 
 Samedent
@@ -257,6 +258,67 @@ EnumeratedListEnumerator
   / a:AlphaNum+ ")"     {setIndentPlaceholder(a.length + 2)}
   / a:AlphaNum+ "."     {setIndentPlaceholder(a.length + 2)}
 
+DefinitionList
+  = i:DefinitionListItem
+    ii:(NewLine NewLine* Samedent DefinitionListItem)*
+  {return ast(T.DefinitionList).add(unroll(i, ii, 3))}
+
+DefinitionListItem
+  = t:DefinitionListTerm
+    c:DefinitionListClassifier*
+    NewLine
+    spaces:_* &{
+      if (spaces.length === indentLevel() + 4) {
+        indent(4)
+        return true
+      } else {
+        return false
+      }
+    }
+      d:DefinitionListDefinition
+    Dedent
+  {return ast(T.DefinitionListItem).add([t, ...c, d])}
+
+DefinitionListTerm
+  = i:InlineMarkupsDLT
+  {return ast(T.DefinitionListTerm).add(i)}
+
+DefinitionListClassifier
+  = _ ":" i:InlineMarkupsDLT
+  {return ast(T.DefinitionListClassifier).add(i)}
+
+DefinitionListDefinition
+  = i:BodyElement
+    ii:(BlankLine Samedent BodyElement)*
+  { return ast(T.DefinitionListDefinition).add(unroll(i, ii, 2)) }
+
+// InlineMarkups(DefinitionListTerm)
+InlineMarkupsDLT
+  = a:((InlineMarkupFirst / TextInlineDLT)
+        InlineMarkupNonFirstDLT*)
+  {
+    const nodes = flatten(a).filter(astyFilter)
+    const mergedNodes = mergeContinuousTextNodes(nodes)
+    return mergedNodes
+  }
+
+// InlineMarkupNonFirst(DefinitionListTerm)
+InlineMarkupNonFirstDLT
+  = "\\ " m:InlineMarkupFirst {return m}
+  / _ InlineMarkupFirst
+  / "\\ " m:TextInlineDLT {return m}
+  / _ TextInlineDLT
+  / TextInlineDLT
+
+// TextInline(DefinitionListTerm)
+TextInlineDLT
+  = c:CharTextInlineDLT+ {return ast(T.Text).set('value', c.join(''))}
+
+CharTextInlineDLT
+  = "\\\\" {return '\\'}
+  // CR LF SPACE \    :
+  / [^\r\n\u0020\u005c\u003a]
+
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
   {
@@ -290,7 +352,8 @@ TextInline "TextInline"
 
 CharTextInline
   = "\\\\" {return '\\'}
-  / [^\r\n \\]
+  // CR LF SPACE \
+  / [^\r\n\u0020\u005c]
 
 StandAloneHyperlink "StandAloneHyperlink"
   = t:TextEmailAdress
