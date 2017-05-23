@@ -21,6 +21,15 @@ module.exports = {
   FieldName: Symbol('FieldName'),
   FieldBody: Symbol('FieldBody'),
 
+  // OptionList
+  OptionList: Symbol('OptionList'),
+  OptionListItem: Symbol('OptionListItem'),
+  OptionGroup: Symbol('OptionGroup'),
+  Option: Symbol('Option'),
+  OptionString: Symbol('OptionString'),
+  OptionArgument: Symbol('OptionArgument'),
+  OptionDescription: Symbol('OptionDescription'),
+
   // =============
   // InlineMarkup
   // =============

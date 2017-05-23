@@ -81,6 +81,7 @@ BodyElement "BodyElement"
   / BulletList
   / FieldList
   / DefinitionList
+  / OptionList
   / Paragraph
 
 Samedent
@@ -393,6 +394,89 @@ InlineMarkupNonFirstFN
   / "\\ " m:TextInlineDLT {return m}
   / _ TextInlineDLT
   / TextInlineDLT
+
+OptionList
+  = i:OptionListItem ii:(NewLine NewLine* Samedent OptionListItem)*
+  {
+    return ast(T.OptionList).add(unroll(i, ii, 3))
+  }
+
+OptionListItem
+//  = OptionGroup NewLine Indent2+ OptionDescription
+  = g:OptionGroup _ _ spc:_*
+    &{ indent(g.len + 2 + spc.length); return true }
+      d:OptionDescription
+    Dedent
+  {
+
+    return ast(T.OptionListItem).add(g.node).add(d)
+  }
+
+OptionGroup
+  = o:Option oo:(", " Option)*
+  {
+    let len = o.len
+    const node = ast(T.OptionGroup).add(o.node)
+
+    oo.forEach(elt => {
+      len += 2 + elt[1]
+      node.add(elt[1].node)
+    })
+
+    return { len, node }
+  }
+
+Option
+  = s:OptionString a:((_ / "=") OptionArgument)?
+  {
+    let len = s.len
+    const node = ast(T.Option).add(s.node)
+
+    if (a !== null) {
+      // +1 for _ / "="
+      len += 1 + a[1].len
+      node.add(a[1].node)
+    }
+
+    return { len, node }
+  }
+
+OptionString
+  // long POSIX option
+  = c:("--" AlphaNum+ ("-" AlphaNum+)*
+
+  // short POSIX option
+  / "-" AlphaNum
+
+  // DOS/VMS option
+  / "/" AlphaNum+)
+  {
+    const text = flatten([c]).join('')
+    const len = text.length
+    const tNode = ast(T.Text).set('value', text)
+    const node = ast(T.OptionString).add(tNode)
+
+    // return len for indentation calculation
+    return { len, node }
+  }
+
+OptionArgument
+  = c:AlphaNum+
+  {
+    const text = c.join('')
+    const len = text.length
+    const tNode = ast(T.Text).set('value', text)
+    const node = ast(T.OptionArgument).add(tNode)
+
+    return { len, node }
+  }
+
+OptionDescription
+  = b:BodyElement
+    bb:(NewLine NewLine* Samedent BodyElement)*
+  {
+    return ast(T.OptionDescription).add(unroll(b, bb, 3))
+  }
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
