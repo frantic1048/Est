@@ -83,6 +83,7 @@ BodyElement "BodyElement"
 
   // ExplicitMarkups
   / Footnote
+  / Citation
 
   / OptionList
   / DefinitionList
@@ -490,7 +491,7 @@ OptionDescription "OptionDescription"
 
 ExplicitMarkupStart = ".. "
 
-Footnote
+Footnote "Footnote"
   = ExplicitMarkupStart
     "["  t:(Num+ / "*" / "#" (AlphaNum / "-")* ) "]" _
     // MEMO: could be more flexible
@@ -505,6 +506,18 @@ Footnote
         .set('ref', flatten([t]).join(''))
     }
 
+Citation "Citation"
+  = ExplicitMarkupStart
+    "[" t:CitationReferenceName "]" _
+    &{indent(4); return true}
+      b:BodyElement
+      bb:(NewLine NewLine* Samedent BodyElement)*
+    Dedent
+    {
+      return ast(T.Citation)
+        .add(unroll(b, bb, 3))
+        .set('name', t)
+    }
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
@@ -755,13 +768,13 @@ FootnoteReference "FootnoteReference"
   { return ast(T.FootnoteReference).set('ref', flatten([t]).join('')) }
 
 CitationReference "CitationReference"
-  = !"\\" "[" t:CitationReferenceName "_"
+  = !"\\" "[" t:CitationReferenceName "]_"
   { return ast(T.CitationReference).set('name', t) }
 
 CitationReferenceName "CitationReferenceName"
   = t:CharReferenceName r:CitationReferenceName
   { return t + r }
-  / "]" {return ''}
+  / &"]" {return ''}
 
 SubstitutionReference "SubstitutionReference"
   // substitution as AnonymousHyperlink
