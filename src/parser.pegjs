@@ -80,8 +80,13 @@ BodyElement "BodyElement"
   / EnumeratedList
   / BulletList
   / FieldList
-  / DefinitionList
+
+  // ExplicitMarkups
+  / Footnote
+
   / OptionList
+  / DefinitionList
+
   / Paragraph
 
 Samedent
@@ -102,6 +107,9 @@ Samedent
 
     // check if eaten spaces is enough
   	&{return indentBuffer === indentLevel()}
+
+    // return nothing
+    {return}
 
 IndentPlaceholder
   = &{indent(indentPlaceholder); return  true}
@@ -479,6 +487,24 @@ OptionDescription "OptionDescription"
   {
     return ast(T.OptionDescription).add(unroll(b, bb, 3))
   }
+
+ExplicitMarkupStart = ".. "
+
+Footnote
+  = ExplicitMarkupStart
+    "["  t:(Num+ / "*" / "#" (AlphaNum / "-")* ) "]" _
+    // MEMO: could be more flexible
+    // fixed 4 space indent
+    &{indent(4); return true}
+      b:BodyElement
+      bb:(NewLine NewLine* Samedent BodyElement)*
+    Dedent
+    {
+      return ast(T.Footnote)
+        .add(unroll(b, bb, 3))
+        .set('ref', flatten([t]).join(''))
+    }
+
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)

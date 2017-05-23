@@ -30,6 +30,8 @@ module.exports = {
   OptionArgument: Symbol('OptionArgument'),
   OptionDescription: Symbol('OptionDescription'),
 
+  Footnote: Symbol('Footnote'),
+
   // =============
   // InlineMarkup
   // =============
