@@ -16,6 +16,11 @@
     let indentPlaceholder = 0
     const setIndentPlaceholder = v => indentPlaceholder = v
 
+    // for Samedent rule
+    let indentBuffer = 0
+    const resetIndentBuffer = () => indentBuffer = 0
+    const indentBufferAdd = v => indentBuffer += v
+
     // flatten nested array
     const flatten = arr => arr.reduce(
       (acc, val) => acc.concat(
@@ -79,10 +84,23 @@ BodyElement "BodyElement"
   / Paragraph
 
 Samedent
-  = spaces:" "* &{return spaces.length === indentLevel()}
+// match same spaces as indentLevel()
+// non-greedy
+  = // clear indentBuffer to 0
+    &{resetIndentBuffer(); return true}
 
-Moredent
-  = spaces:" "* &{return spaces.length > indentLevel()}
+    // eat spaces no more than
+    // current indent level
+    (_ &{
+      if (indentBuffer < indentLevel()) {
+      	indentBufferAdd(1)
+      	return true
+      }
+      else { return false }
+    })*
+
+    // check if eaten spaces is enough
+  	&{return indentBuffer === indentLevel()}
 
 IndentPlaceholder
   = &{indent(indentPlaceholder); return  true}
