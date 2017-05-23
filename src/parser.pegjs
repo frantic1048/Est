@@ -183,7 +183,7 @@ BulletListBullet "BulletListBullet"
   // *      +      -    ‧    ‣     ⁃
   = [\u002A\u002B\u002D\u2027\u2023\u2043]
 
-EnumeratedList
+EnumeratedList "EnumeratedList"
   = i:EnumeratedListItemFirst
     ii:(NewLine NewLine* Samedent EnumeratedListItem)*
   {
@@ -193,7 +193,7 @@ EnumeratedList
     return l
   }
 
-EnumeratedListItemFirst
+EnumeratedListItemFirst "EnumeratedListItemFirst"
 = t:EnumeratedListEnumeratorFirst _
   IndentPlaceholder
     i:ListItem
@@ -205,7 +205,7 @@ EnumeratedListItemFirst
     }
   }
 
-EnumeratedListItem
+EnumeratedListItem "EnumeratedListItem"
   = EnumeratedListEnumerator _
     IndentPlaceholder
       i:ListItem
@@ -215,7 +215,7 @@ EnumeratedListItem
 // t: enumerator type
 // prefix: enumerator prefix
 // suffix: enumerator suffix
-EnumeratedListEnumeratorFirst
+EnumeratedListEnumeratorFirst "EnumeratedListEnumeratorFirst"
   = "(" a:Num+ ")"       {
     setIndentPlaceholder(a.length + 3)
     return {t:'arabic_num', prefix: '(', suffix: ')'}
@@ -273,17 +273,17 @@ EnumeratedListEnumeratorFirst
     return {t: 'lowercase_alpha', suffix: p}
   }
 
-EnumeratedListEnumerator
+EnumeratedListEnumerator "EnumeratedListEnumerator"
   = "(" a:AlphaNum+ ")" {setIndentPlaceholder(a.length + 3)}
   / a:AlphaNum+ ")"     {setIndentPlaceholder(a.length + 2)}
   / a:AlphaNum+ "."     {setIndentPlaceholder(a.length + 2)}
 
-DefinitionList
+DefinitionList "DefinitionList"
   = i:DefinitionListItem
     ii:(NewLine NewLine* Samedent DefinitionListItem)*
   {return ast(T.DefinitionList).add(unroll(i, ii, 3))}
 
-DefinitionListItem
+DefinitionListItem "DefinitionListItem"
   = t:DefinitionListTerm
     c:DefinitionListClassifier*
     NewLine
@@ -299,21 +299,21 @@ DefinitionListItem
     Dedent
   {return ast(T.DefinitionListItem).add([t, ...c, d])}
 
-DefinitionListTerm
+DefinitionListTerm "DefinitionListTerm"
   = i:InlineMarkupsDLT
   {return ast(T.DefinitionListTerm).add(i)}
 
-DefinitionListClassifier
+DefinitionListClassifier "DefinitionListClassifier"
   = _ ":" i:InlineMarkupsDLT
   {return ast(T.DefinitionListClassifier).add(i)}
 
-DefinitionListDefinition
+DefinitionListDefinition "DefinitionListDefinition"
   = i:BodyElement
     ii:(BlankLine NewLine* Samedent BodyElement)*
   { return ast(T.DefinitionListDefinition).add(unroll(i, ii, 3)) }
 
 // InlineMarkups(DefinitionListTerm)
-InlineMarkupsDLT
+InlineMarkupsDLT "InlineMarkupsDLT"
   = a:((InlineMarkupFirst / TextInlineDLT)
         InlineMarkupNonFirstDLT*)
   {
@@ -323,7 +323,7 @@ InlineMarkupsDLT
   }
 
 // InlineMarkupNonFirst(DefinitionListTerm)
-InlineMarkupNonFirstDLT
+InlineMarkupNonFirstDLT "InlineMarkupNonFirstDLT"
   = "\\ " m:InlineMarkupFirst {return m}
   / _ InlineMarkupFirst
   / "\\ " m:TextInlineDLT {return m}
@@ -331,20 +331,20 @@ InlineMarkupNonFirstDLT
   / TextInlineDLT
 
 // TextInline(DefinitionListTerm)
-TextInlineDLT
+TextInlineDLT "TextInlineDLT"
   = c:CharTextInlineDLT+ {return ast(T.Text).set('value', c.join(''))}
 
-CharTextInlineDLT
+CharTextInlineDLT "CharTextInlineDLT"
   = "\\\\" {return '\\'}
   / "\\:"  {return ':'}
   // CR LF SPACE \    :
   / [^\r\n\u0020\u005c\u003a]
 
-FieldList
+FieldList "FieldList"
   = f:Field ff:(NewLine NewLine* Field)*
   {return ast(T.FieldList).add(unroll(f, ff, 2))}
 
-Field
+Field "Field"
   = n:FieldName
     Indent
       _ e:BodyElement
@@ -355,12 +355,12 @@ Field
     return ast(T.Field).add([n, fBody])
   }
 
-FieldName
+FieldName "FieldName"
   = ":" i:InlineMarkupsFN ":"
   {return ast(T.FieldName).add(i)}
 
 // InlineMarkups(FieldName)
-InlineMarkupsFN
+InlineMarkupsFN "InlineMarkupsFN"
   = a:((InlineMarkupFirstFN / TextInlineDLT)
         InlineMarkupNonFirstFN*)
   {
@@ -369,7 +369,7 @@ InlineMarkupsFN
     return mergedNodes
   }
 
-InlineMarkupFirstFN
+InlineMarkupFirstFN "InlineMarkupFirstFN"
 // MEMO:
 // InlineMarkupFirst rule
 //   without StandAloneHyperlink
@@ -388,20 +388,22 @@ InlineMarkupFirstFN
   / StrongEmphasis
   / Emphasis
 
-InlineMarkupNonFirstFN
+InlineMarkupNonFirstFN "InlineMarkupNonFirstFN"
   = "\\ " m:InlineMarkupFirstFN {return m}
   / _ InlineMarkupFirstFN
   / "\\ " m:TextInlineDLT {return m}
   / _ TextInlineDLT
   / TextInlineDLT
 
-OptionList
+// MEMO:
+// allow wider argument forms as in spec
+OptionList "OptionList"
   = i:OptionListItem ii:(NewLine NewLine* Samedent OptionListItem)*
   {
     return ast(T.OptionList).add(unroll(i, ii, 3))
   }
 
-OptionListItem
+OptionListItem "OptionListItem"
 //  = OptionGroup NewLine Indent2+ OptionDescription
   = g:OptionGroup _ _ spc:_*
     &{ indent(g.len + 2 + spc.length); return true }
@@ -412,7 +414,7 @@ OptionListItem
     return ast(T.OptionListItem).add(g.node).add(d)
   }
 
-OptionGroup
+OptionGroup "OptionGroup"
   = o:Option oo:(", " Option)*
   {
     let len = o.len
@@ -426,7 +428,7 @@ OptionGroup
     return { len, node }
   }
 
-Option
+Option "Option"
   = s:OptionString a:((_ / "=") OptionArgument)?
   {
     let len = s.len
@@ -441,7 +443,7 @@ Option
     return { len, node }
   }
 
-OptionString
+OptionString "OptionString"
   // long POSIX option
   = c:("--" AlphaNum+ ("-" AlphaNum+)*
 
@@ -460,7 +462,7 @@ OptionString
     return { len, node }
   }
 
-OptionArgument
+OptionArgument "OptionArgument"
   = c:AlphaNum+
   {
     const text = c.join('')
@@ -471,7 +473,7 @@ OptionArgument
     return { len, node }
   }
 
-OptionDescription
+OptionDescription "OptionDescription"
   = b:BodyElement
     bb:(NewLine NewLine* Samedent BodyElement)*
   {
@@ -486,7 +488,7 @@ InlineMarkups "InlineMarkups"
     return mergedNodes
   }
 
-InlineMarkupFirst
+InlineMarkupFirst "InlineMarkupFirst"
   = StandAloneHyperlink
   / InlineInternalTarget
   / AnonymousHyperlink
@@ -499,7 +501,7 @@ InlineMarkupFirst
   / StrongEmphasis
   / Emphasis
 
-InlineMarkupNonFirst
+InlineMarkupNonFirst "InlineMarkupNonFirst"
   = "\\ " m:InlineMarkupFirst {return m}
   / _ InlineMarkupFirst
   / "\\ " m:TextInline {return m}
@@ -509,7 +511,7 @@ InlineMarkupNonFirst
 TextInline "TextInline"
   = c:CharTextInline+ {return ast(T.Text).set('value', c.join(''))}
 
-CharTextInline
+CharTextInline "CharTextInline"
   = "\\\\" {return '\\'}
   // CR LF SPACE \
   / [^\r\n\u0020\u005c]
@@ -675,12 +677,12 @@ AnonymousHyperlink "AnonymousHyperlink"
     return ast(T.AnonymousHyperlink).add(tNode)
   }
 
-EmbeddedHyperlinkLabel
+EmbeddedHyperlinkLabel "EmbeddedHyperlinkLabel"
   = t:CharInlineLiteral r:EmbeddedHyperlinkLabel
   { return t + r }
   / "<" {return ''}
 
-AnonymousHyperlinkImplict
+AnonymousHyperlinkImplict "AnonymousHyperlinkImplict"
   = t:CharReferenceName r:AnonymousHyperlinkImplict
   {return t + r}
   / "__" // don't return ending "__"
@@ -700,18 +702,18 @@ NamedHyperlink "NamedHyperlink"
     return ast(T.NamedHyperlink).add(tNode).set('name', t)
   }
 
-NamedHyperlinkReferenceName
+NamedHyperlinkReferenceName "NamedHyperlinkReferenceName"
   = t:CharInlineLiteral r:NamedHyperlinkReferenceName
   { return t + r }
   / "_" {return ''}
 
-NamedHyperlinkImplict
+NamedHyperlinkImplict "NamedHyperlinkImplict"
   = t:CharReferenceName r:NamedHyperlinkImplict
   { return t + r}
   / "_" // don't return ending "_"
   { return ''}
 
-CharReferenceName
+CharReferenceName "CharReferenceName"
   = [a-zA-Z0-9] / "+" / "-" / "_" / "."
 
 InlineInternalTarget "InlineInternalTarget"
@@ -730,12 +732,12 @@ CitationReference "CitationReference"
   = !"\\" "[" t:CitationReferenceName "_"
   { return ast(T.CitationReference).set('name', t) }
 
-CitationReferenceName
+CitationReferenceName "CitationReferenceName"
   = t:CharReferenceName r:CitationReferenceName
   { return t + r }
   / "]" {return ''}
 
-SubstitutionReference
+SubstitutionReference "SubstitutionReference"
   // substitution as AnonymousHyperlink
   = !"\\" "|" t:SubstitutionReferenceName "__"
   {
@@ -752,7 +754,7 @@ SubstitutionReference
   / !"\\" "|" t:SubstitutionReferenceName
   { return ast(T.SubstitutionReference).set('name', t) }
 
-SubstitutionReferenceName
+SubstitutionReferenceName "SubstitutionReferenceName"
   = t:CharReferenceName r:SubstitutionReferenceName
   { return t + r }
   / "|" {return ''}
@@ -767,16 +769,16 @@ InterpretedText "InterpretedText"
   / !"\\" "`"  t:TextInlineLiteral !"\\" "`"
   { return ast(T.InterpretedText).add(t) }
 
-InterpretedTextRole
+InterpretedTextRole "InterpretedTextRole"
   = ":" r:CharReferenceName+ ":"
   { return r.join('')}
 
 
-TextInlineLiteral
+TextInlineLiteral "TextInlineLiteral"
   = c:CharInlineLiteral+
   { return ast(T.Text).set('value', c.join('')) }
 
-CharInlineLiteral
+CharInlineLiteral "CharInlineLiteral"
   = "\\`" { return '`' }
   //  CR LF `
   / [^\r\n\u0060]
@@ -789,11 +791,11 @@ Emphasis "Emphasis"
   = !"\\" "*" t:TextEmphasis !"\\" "*"
   { return ast(T.Emphasis).add(t) }
 
-TextEmphasis
+TextEmphasis "TextEmphasis"
   = c:CharEmphasis+
   { return ast(T.Text).set('value', c.join('')) }
 
-CharEmphasis
+CharEmphasis "CharEmphasis"
   = "\\\\" {return '\\'}
   / "\\*" {return '*'}
   //  CR LF *
