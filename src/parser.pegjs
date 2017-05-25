@@ -38,7 +38,6 @@
 
 
       // check if legal section adornment char
-      console.log('test',regValidSectionAdornment.test(start))
       if (!regValidSectionAdornment.test(start)) return false
 
       // check if all the same character
