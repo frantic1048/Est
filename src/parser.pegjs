@@ -72,8 +72,11 @@
 
 Document
 // contains block level token
-  = b:BodyElement bb:(BlankLine BodyElement)* NewLine*
-  {return unroll(b, bb, 1)}
+  = b:(HyperlinkTarget / BodyElement)
+    bb:((NewLine HyperlinkTarget)
+       /(BlankLine BodyElement))*
+    NewLine*
+  {return flatten([b, bb])}
 
 BodyElement "BodyElement"
   = Transition
@@ -519,6 +522,43 @@ Citation "Citation"
         .set('name', t)
     }
 
+HyperlinkTarget "HyperlinkTarget"
+  = ExplicitMarkupStart
+    "_" "`" t:CharInlineLiteral+ "`" ":"
+    l:(_ LinkBlock)?
+    {
+      const node = ast(T.Target).set('name', t.join(''))
+      if (l !== null) {
+        node.add(l)
+      }
+      return node
+    }
+  / ExplicitMarkupStart
+    "_" t:CharReferenceName+ ":"
+    l:(_ LinkBlock)?
+    {
+      const node = ast(T.Target).set('name', t.join(''))
+      if (l !== null) {
+        node.add(l)
+      }
+      return node
+    }
+
+LinkBlock "LinkBlock"
+  = NamedHyperlink
+  / TextLiteralLink
+
+TextLiteralLink "TextLiteralLink"
+  = t:TextInline
+    &{indent(3); return true}
+      tt:(NewLine Samedent TextInline)*
+    Dedent
+    {
+      // there should be only 1 node
+      // after merging multiple Text node
+      return mergeContinuousTextNodes(unroll(t, tt, 2))[0]
+    }
+
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
   {
@@ -749,8 +789,7 @@ NamedHyperlinkReferenceName "NamedHyperlinkReferenceName"
 NamedHyperlinkImplict "NamedHyperlinkImplict"
   = t:CharReferenceName r:NamedHyperlinkImplict
   { return t + r}
-  / "_" // don't return ending "_"
-  { return ''}
+  / "_" {return ''}
 
 CharReferenceName "CharReferenceName"
   = [a-zA-Z0-9] / "+" / "-" / "_" / "."

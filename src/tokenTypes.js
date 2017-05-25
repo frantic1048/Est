@@ -33,6 +33,7 @@ module.exports = {
   // Reference Targets
   Footnote: Symbol('Footnote'),
   Citation: Symbol('Citation'),
+  Target: Symbol('Target'),
 
   // =============
   // InlineMarkup
