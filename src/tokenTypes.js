@@ -35,6 +35,12 @@ module.exports = {
   Citation: Symbol('Citation'),
   Target: Symbol('Target'),
 
+  Directive: Symbol('Directive'),
+  DirectiveType: Symbol('DirectiveType'),
+  DirectiveArgument: Symbol('DirectiveArgument'),
+  DirectiveOption: Symbol('DirectiveOption'),
+  DirectiveContent: Symbol('DirectiveContent'),
+
   // =============
   // InlineMarkup
   // =============

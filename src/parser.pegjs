@@ -87,6 +87,7 @@ BodyElement "BodyElement"
   // ExplicitMarkups
   / Footnote
   / Citation
+  / Directive
 
   / OptionList
   / DefinitionList
@@ -353,8 +354,8 @@ CharTextInlineDLT "CharTextInlineDLT"
   / [^\r\n\u0020\u005c\u003a]
 
 FieldList "FieldList"
-  = f:Field ff:(NewLine NewLine* Field)*
-  {return ast(T.FieldList).add(unroll(f, ff, 2))}
+  = f:Field ff:(NewLine NewLine* Samedent Field)*
+  {return ast(T.FieldList).add(unroll(f, ff, 3))}
 
 Field "Field"
   = n:FieldName
@@ -565,6 +566,59 @@ TextLiteralLink "TextLiteralLink"
       // after merging multiple Text node
       return mergeContinuousTextNodes(unroll(t, tt, 2))[0]
     }
+
+
+Directive "Directive"
+  = ExplicitMarkupStart
+    t:DirectiveType "::" a:(_ DirectiveArgument)?
+    &{indent(3); return true}
+      o:(NewLine Samedent FieldList)? // DirectiveOption
+      c:(NewLine Samedent DirectiveContent)?
+    Dedent
+    {
+      const node = ast(T.Directive).set('type', t)
+      if (a !== null) node.add(a[1])
+      if (o !== null) node.add(ast(T.DirectiveOption).add(o[2]))
+      if (c !== null) node.add(c[2])
+
+      return node
+    }
+
+DirectiveType "DirectiveType"
+  = t:CharDirectiveType r:DirectiveType
+    {return t + r}
+  / &"::" {return ''}
+
+// Directive types are case‐
+// insensitive single words (alphanumerics plus isolated internal hyphens, underscores, plus
+// signs, colons, and periods; no whitespace).
+CharDirectiveType "CharDirectiveType"
+  = AlphaNum
+    / "-"
+    / "_"
+    / "+"
+    / ":"
+    / "."
+
+DirectiveArgument
+  = t:[^\r\n]+
+  {
+    const tNode = ast(T.Text).set('value', t.join(''))
+    return ast(T.DirectiveArgument).add(tNode)
+  }
+
+// a block of literal text
+DirectiveContent "DirectiveContent"
+  = t:CharDirectiveContent+
+    tt:(NewLine+ Samedent CharDirectiveContent*)*
+    {
+      const text = t.join('') + tt.map(e => e[2].join('')).join('')
+      const tNode = ast(T.Text).set('value', text)
+      return ast(T.DirectiveContent).add(tNode)
+    }
+
+CharDirectiveContent "CharDirectiveContent"
+  = [^\r\n]
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
