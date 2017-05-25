@@ -775,14 +775,14 @@ AnonymousHyperlinkImplict "AnonymousHyperlinkImplict"
   {return ''}
 
 NamedHyperlink "NamedHyperlink"
-  = !"\\" "`" t:EmbeddedHyperlinkLabel u:NamedHyperlinkReferenceName ">`_"
+  = !"\\" "`" t:EmbeddedHyperlinkLabel u:NamedHyperlinkReferenceName "_>`_"
   {
     const tNode = ast(T.Text).set('value', t)
     return ast(T.NamedHyperlink).add(tNode).set('name', u)
   }
   / !"\\" "`" t:TextInlineLiteral !"\\" "`_"
   { return ast(T.NamedHyperlink).add(t).set('name', t.get('value')) }
-  / t:NamedHyperlinkImplict
+  / t:NamedHyperlinkImplict "_"
   {
     const tNode = ast(T.Text).set('value', t)
     return ast(T.NamedHyperlink).add(tNode).set('name', t)
@@ -791,12 +791,12 @@ NamedHyperlink "NamedHyperlink"
 NamedHyperlinkReferenceName "NamedHyperlinkReferenceName"
   = t:CharInlineLiteral r:NamedHyperlinkReferenceName
   { return t + r }
-  / "_" {return ''}
+  / &"_" {return ''}
 
 NamedHyperlinkImplict "NamedHyperlinkImplict"
   = t:CharReferenceName r:NamedHyperlinkImplict
   { return t + r}
-  / "_" {return ''}
+  / &"_" {return ''}
 
 CharReferenceName "CharReferenceName"
   = [a-zA-Z0-9] / "+" / "-" / "_" / "."
