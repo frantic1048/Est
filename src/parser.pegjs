@@ -21,6 +21,32 @@
     const resetIndentBuffer = () => indentBuffer = 0
     const indentBufferAdd = v => indentBuffer += v
 
+    // for Section rule
+
+    // ! " # $ % & ' ( ) * + , - . /
+    // : ; < = > ? @
+    // [ \ ] ^ _ `
+    // { | } ~
+    const regValidSectionAdornment = /[\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E]/
+
+    const isValidSectionAdornment = (charList, symbol) => {
+      const start = charList[0]
+
+      if (symbol !== undefined) {
+        if (start !== symbol) return false
+      }
+
+
+      // check if legal section adornment char
+      console.log('test',regValidSectionAdornment.test(start))
+      if (!regValidSectionAdornment.test(start)) return false
+
+      // check if all the same character
+      if (!charList.reduce((s, c) => s && (c === start), true)) return false
+
+      return true
+    }
+
     // flatten nested array
     const flatten = arr => arr.reduce(
       (acc, val) => acc.concat(
@@ -79,7 +105,8 @@ Document
   {return flatten([b, bb])}
 
 BodyElement "BodyElement"
-  = Transition
+  = Section
+  / Transition
   / EnumeratedList
   / BulletList
   / FieldList
@@ -128,6 +155,45 @@ Indent
 
 Dedent
   = &{dedent(); return true}
+
+Section
+  = c:(CharSectionAdornment+ NewLine)?
+    m:InlineMarkups NewLine
+    cc:CharSectionAdornment+
+    &{
+      // MEMO:
+      //   dynamic CharSection length limit
+      //   based on length of m:InlineMarkups
+      if (cc.length < 3) return false
+
+      if (!isValidSectionAdornment(cc)) return false
+
+      if (c !== null) {
+        if (!isValidSectionAdornment(c[0])) return false
+        if (c[0].length !== cc.length) return false
+        if (c[0][0] !== cc[0]) return false
+      }
+
+      return true
+    }
+    {
+      const node = ast(T.Section).add(m)
+
+      let style = cc[0]
+      if (c !== null) style += cc[0]
+      node.set('style', style)
+
+      return node
+    }
+
+
+CharSectionAdornment
+  // ! " # $ % & ' ( ) * + , - . /
+  // : ; < = > ? @
+  // [ \ ] ^ _ `
+  // { | } ~
+  = [\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E]
+
 
 Transition "Transition"
 // NOTE: semantic: Document or section may not

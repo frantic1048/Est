@@ -31,6 +31,9 @@ module.exports = {
   OptionDescription: Symbol('OptionDescription'),
 
   // Reference Targets
+  Section: Symbol('Section'),
+  Title: Symbol('Title'),
+
   Footnote: Symbol('Footnote'),
   Citation: Symbol('Citation'),
   Target: Symbol('Target'),
