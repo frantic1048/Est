@@ -87,6 +87,7 @@ BodyElement "BodyElement"
   // ExplicitMarkups
   / Footnote
   / Citation
+  / SubstitutionDefinition
   / Directive
 
   / OptionList
@@ -570,7 +571,12 @@ TextLiteralLink "TextLiteralLink"
 
 Directive "Directive"
   = ExplicitMarkupStart
-    t:DirectiveType "::" a:(_ DirectiveArgument)?
+    d:InlineCompatibleDirective
+    {return d}
+
+
+InlineCompatibleDirective
+  = t:DirectiveType "::" a:(_ DirectiveArgument)?
     &{indent(3); return true}
       o:(NewLine Samedent FieldList)? // DirectiveOption
       c:(NewLine Samedent DirectiveContent)?
@@ -619,6 +625,18 @@ DirectiveContent "DirectiveContent"
 
 CharDirectiveContent "CharDirectiveContent"
   = [^\r\n]
+
+SubstitutionDefinition "SubstitutionDefinition"
+  = ExplicitMarkupStart
+  "|" t:SubstitutionReferenceName "|" _
+  d:InlineCompatibleDirective
+  {
+    return ast(T.SubstitutionDefinition)
+            .set('name', t)
+            .add(d)
+  }
+
+
 
 InlineMarkups "InlineMarkups"
   = a:((InlineMarkupFirst / TextInline) InlineMarkupNonFirst*)
@@ -878,25 +896,25 @@ CitationReferenceName "CitationReferenceName"
 
 SubstitutionReference "SubstitutionReference"
   // substitution as AnonymousHyperlink
-  = !"\\" "|" t:SubstitutionReferenceName "__"
+  = !"\\" "|" t:SubstitutionReferenceName "|__"
   {
     const sNode = ast(T.SubstitutionReference).set('name', t)
     return ast(T.AnonymousHyperlink).add(sNode)
   }
   // substitution as NamedHyperlink
-  / !"\\" "|" t:SubstitutionReferenceName "_"
+  / !"\\" "|" t:SubstitutionReferenceName "|_"
   {
     const sNode = ast(T.SubstitutionReference).set('name', t)
     return ast(T.NamedHyperlink).add(sNode).set('name', t)
   }
   // normal substitution
-  / !"\\" "|" t:SubstitutionReferenceName
+  / !"\\" "|" t:SubstitutionReferenceName "|"
   { return ast(T.SubstitutionReference).set('name', t) }
 
 SubstitutionReferenceName "SubstitutionReferenceName"
   = t:CharReferenceName r:SubstitutionReferenceName
   { return t + r }
-  / "|" {return ''}
+  / &"|" {return ''}
 
 InterpretedText "InterpretedText"
   = r:InterpretedTextRole !"\\" "`"  t:TextInlineLiteral !"\\" "`"

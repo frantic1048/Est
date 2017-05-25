@@ -41,6 +41,8 @@ module.exports = {
   DirectiveOption: Symbol('DirectiveOption'),
   DirectiveContent: Symbol('DirectiveContent'),
 
+  SubstitutionDefinition: Symbol('SubstitutionDefinition'),
+
   // =============
   // InlineMarkup
   // =============
