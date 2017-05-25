@@ -152,3 +152,21 @@ test('continuous', t => {
   t.true(isMatch(actual, expected),
     'should parse a Target')
 })
+
+test('anonymous', t => {
+  const tracer = t.context.tracer
+  const actual = parse('.. __: https://soundcloud.com/shadic-the-hedgehog/usao-miracle-5ympho-x-extended-mix', {tracer})
+  const expected = {
+    ast: [
+      {
+        T: T.Target,
+        C: [{
+          T: T.Text,
+          A: {'value': 'https://soundcloud.com/shadic-the-hedgehog/usao-miracle-5ympho-x-extended-mix'}
+        }]
+      }
+    ]
+  }
+  t.true(isMatch(actual, expected),
+    'should parse a Target')
+})

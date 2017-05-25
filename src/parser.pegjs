@@ -524,12 +524,19 @@ Citation "Citation"
 
 HyperlinkTarget "HyperlinkTarget"
   = ExplicitMarkupStart
+    "__:" _ l:LinkBlock
+    {
+      // Anonymous target
+      // dose not have name attribute
+      return ast(T.Target).add(l)
+    }
+  / ExplicitMarkupStart
     "_" "`" t:CharInlineLiteral+ "`" ":"
     l:(_ LinkBlock)?
     {
       const node = ast(T.Target).set('name', t.join(''))
       if (l !== null) {
-        node.add(l)
+        node.add(l[1])
       }
       return node
     }
@@ -539,7 +546,7 @@ HyperlinkTarget "HyperlinkTarget"
     {
       const node = ast(T.Target).set('name', t.join(''))
       if (l !== null) {
-        node.add(l)
+        node.add(l[1])
       }
       return node
     }
