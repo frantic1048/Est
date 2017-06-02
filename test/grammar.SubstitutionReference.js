@@ -29,14 +29,16 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('|Urara|', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.SubstitutionReference,
-        A: { name: 'Urara' }
+        T: T.Paragraph,
+        C: [{
+          T: T.SubstitutionReference,
+          A: { name: 'Urara' }
+        }]
       }]
-    }]
-  }
+    }}
   t.true(isMatch(actual, expected), 'should parse substitution reference')
 })
 
@@ -44,17 +46,19 @@ test('as AnonymousHyperlink', t => {
   const tracer = t.context.tracer
   const actual = parse('|Urara|__', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.AnonymousHyperlink,
+        T: T.Paragraph,
         C: [{
-          T: T.SubstitutionReference,
-          A: { name: 'Urara' }
+          T: T.AnonymousHyperlink,
+          C: [{
+            T: T.SubstitutionReference,
+            A: { name: 'Urara' }
+          }]
         }]
       }]
-    }]
-  }
+    }}
   t.true(isMatch(actual, expected), 'should parse substitution reference')
 })
 
@@ -62,17 +66,19 @@ test('as NamedHyperlink', t => {
   const tracer = t.context.tracer
   const actual = parse('|Urara|_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.NamedHyperlink,
-        A: {name: 'Urara'},
+        T: T.Paragraph,
         C: [{
-          T: T.SubstitutionReference,
-          A: { name: 'Urara' }
+          T: T.NamedHyperlink,
+          A: {name: 'Urara'},
+          C: [{
+            T: T.SubstitutionReference,
+            A: { name: 'Urara' }
+          }]
         }]
       }]
-    }]
-  }
+    }}
   t.true(isMatch(actual, expected), 'should parse substitution reference')
 })

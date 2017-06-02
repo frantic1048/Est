@@ -30,94 +30,96 @@ test('simple', t => {
   const actual = parse(`--aya-ya  yaya
 -b, -c FILE  bc`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.OptionList,
-        C: [
-          {
-            T: T.OptionListItem,
-            C: [
-              {
-                T: T.OptionGroup,
-                C: [
-                  {
-                    T: T.Option,
-                    C: [{
-                      T: T.OptionString,
-                      C: [
-                        {
-                          T: T.Text,
-                          A: {'value': '--aya-ya'}
-                        }
-                      ]
-                    }]
-                  }
-                ]
-              },
-              {
-                T: T.OptionDescription,
-                C: [{
-                  T: T.Paragraph,
-                  C: [{
-                    T: T.Text,
-                    A: {'value': 'yaya'}
-                  }]
-                }]
-              }
-            ]
-          },
-          {
-            T: T.OptionListItem,
-            C: [
-              {
-                T: T.OptionGroup,
-                C: [
-                  {
-                    T: T.Option,
-                    C: [{
-                      T: T.OptionString,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.OptionList,
+          C: [
+            {
+              T: T.OptionListItem,
+              C: [
+                {
+                  T: T.OptionGroup,
+                  C: [
+                    {
+                      T: T.Option,
                       C: [{
-                        T: T.Text,
-                        A: {'value': '-b'}
+                        T: T.OptionString,
+                        C: [
+                          {
+                            T: T.Text,
+                            A: {'value': '--aya-ya'}
+                          }
+                        ]
                       }]
+                    }
+                  ]
+                },
+                {
+                  T: T.OptionDescription,
+                  C: [{
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'yaya'}
                     }]
-                  },
-                  {
-                    T: T.Option,
-                    C: [
-                      {
+                  }]
+                }
+              ]
+            },
+            {
+              T: T.OptionListItem,
+              C: [
+                {
+                  T: T.OptionGroup,
+                  C: [
+                    {
+                      T: T.Option,
+                      C: [{
                         T: T.OptionString,
                         C: [{
                           T: T.Text,
-                          A: {'value': '-c'}
+                          A: {'value': '-b'}
                         }]
-                      },
-                      {
-                        T: T.OptionArgument,
-                        C: [{
-                          T: T.Text,
-                          A: {'value': 'FILE'}
-                        }]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                T: T.OptionDescription,
-                C: [{
-                  T: T.Paragraph,
+                      }]
+                    },
+                    {
+                      T: T.Option,
+                      C: [
+                        {
+                          T: T.OptionString,
+                          C: [{
+                            T: T.Text,
+                            A: {'value': '-c'}
+                          }]
+                        },
+                        {
+                          T: T.OptionArgument,
+                          C: [{
+                            T: T.Text,
+                            A: {'value': 'FILE'}
+                          }]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  T: T.OptionDescription,
                   C: [{
-                    T: T.Text,
-                    A: {'value': 'bc'}
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'bc'}
+                    }]
                   }]
-                }]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a OptionList')
@@ -132,53 +134,55 @@ test('complex description', t => {
             - subl
 -b, -c FILE  bc`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.OptionList,
-        C: [
-          {
-            T: T.OptionListItem,
-            C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.OptionList,
+          C: [
+            {
+              T: T.OptionListItem,
+              C: [
               {T: T.OptionGroup},
-              {
-                T: T.OptionDescription,
-                C: [
+                {
+                  T: T.OptionDescription,
+                  C: [
                   { T: T.Paragraph },
-                  {
-                    T: T.BulletList,
-                    C: [
-                      {
-                        T: T.ListItem,
-                        C: [
+                    {
+                      T: T.BulletList,
+                      C: [
+                        {
+                          T: T.ListItem,
+                          C: [
                           { T: T.Paragraph },
                           { T: T.BulletList }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            T: T.OptionListItem,
-            C: [
-              {
-                T: T.OptionGroup,
-                C: [
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              T: T.OptionListItem,
+              C: [
+                {
+                  T: T.OptionGroup,
+                  C: [
                   { T: T.Option },
                   { T: T.Option }
-                ]
-              },
-              {
-                T: T.OptionDescription,
-                C: [{ T: T.Paragraph }]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                  ]
+                },
+                {
+                  T: T.OptionDescription,
+                  C: [{ T: T.Paragraph }]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a OptionList')

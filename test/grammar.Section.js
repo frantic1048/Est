@@ -30,16 +30,18 @@ test('two lines', t => {
   const actual = parse(`Head
 ----`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Section,
-        A: {'style': '-'},
-        C: [{
-          T: T.Text,
-          A: {'value': 'Head'}
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Section,
+          A: {'style': '-'},
+          C: [{
+            T: T.Text,
+            A: {'value': 'Head'}
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Section')
@@ -51,16 +53,18 @@ test('three lines with multiple markups', t => {
 *Head* ya
 ==========`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Section,
-        A: {'style': '=='},
-        C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Section,
+          A: {'style': '=='},
+          C: [
           { T: T.Emphasis },
           { T: T.Text }
-        ]
-      }
-    ]
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Section')

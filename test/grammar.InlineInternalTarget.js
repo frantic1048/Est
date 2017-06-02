@@ -29,21 +29,23 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('_`Chiya Ujimatsu`', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InlineInternalTarget,
-        A: { name: 'Chiya Ujimatsu' },
-        C: [
-          {
-            T: T.Text,
-            A: {
-              value: 'Chiya Ujimatsu'
+        T: T.Paragraph,
+        C: [{
+          T: T.InlineInternalTarget,
+          A: { name: 'Chiya Ujimatsu' },
+          C: [
+            {
+              T: T.Text,
+              A: {
+                value: 'Chiya Ujimatsu'
+              }
             }
-          }
-        ]
-      }]
-    }]
+          ]
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse inline internal target')
 })

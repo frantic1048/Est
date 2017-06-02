@@ -33,26 +33,28 @@ test('arabic num.', t => {
 
 3. item3`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.EnumeratedList,
-        A: { style: {
-          t: 'arabic_num',
-          suffix: '.'
-        }},
-        C: [
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.EnumeratedList,
+          A: { style: {
+            t: 'arabic_num',
+            suffix: '.'
+          }},
+          C: [
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a EnumeratedList with items')
@@ -66,26 +68,28 @@ b) item2
 
 c) item3`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.EnumeratedList,
-        A: { style: {
-          t: 'lowercase_alpha',
-          suffix: ')'
-        }},
-        C: [
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.EnumeratedList,
+          A: { style: {
+            t: 'lowercase_alpha',
+            suffix: ')'
+          }},
+          C: [
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a EnumeratedList with items')
@@ -99,27 +103,29 @@ test('uppercase roman (num)', t => {
 
 (III) item3`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.EnumeratedList,
-        A: { style: {
-          t: 'uppercase_roman_num',
-          prefix: '(',
-          suffix: ')'
-        }},
-        C: [
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          },
-          {
-            T: T.ListItem
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.EnumeratedList,
+          A: { style: {
+            t: 'uppercase_roman_num',
+            prefix: '(',
+            suffix: ')'
+          }},
+          C: [
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            },
+            {
+              T: T.ListItem
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a EnumeratedList with items')
@@ -137,44 +143,46 @@ test('cascade', t => {
 
 (iii) item3`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.EnumeratedList,
-        A: { style: {
-          t: 'lowercase_roman_num',
-          prefix: '(',
-          suffix: ')'
-        }},
-        C: [
-          {
-            T: T.ListItem,
-            C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.EnumeratedList,
+          A: { style: {
+            t: 'lowercase_roman_num',
+            prefix: '(',
+            suffix: ')'
+          }},
+          C: [
+            {
+              T: T.ListItem,
+              C: [
               {T: T.Paragraph},
-              {
-                T: T.EnumeratedList,
-                C: [
+                {
+                  T: T.EnumeratedList,
+                  C: [
                   {T: T.ListItem},
                   {T: T.ListItem}
-                ]
-              }
-            ]
-          },
-          {
-            T: T.ListItem,
-            C: [{
-              T: T.EnumeratedList,
-              C: [
+                  ]
+                }
+              ]
+            },
+            {
+              T: T.ListItem,
+              C: [{
+                T: T.EnumeratedList,
+                C: [
                 {T: T.ListItem},
                 {T: T.ListItem}
-              ]
-            }]
-          },
-          {
-            T: T.ListItem
-          }
-        ]
-      }
-    ]
+                ]
+              }]
+            },
+            {
+              T: T.ListItem
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a EnumeratedList with items')
@@ -185,26 +193,28 @@ test('dots', t => {
   const actual = parse(`(i) i.1
 (ii) ii.2`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.EnumeratedList,
-        A: { style: {
-          t: 'lowercase_roman_num',
-          prefix: '(',
-          suffix: ')'
-        }},
-        C: [
-          {
-            T: T.ListItem,
-            C: [{T: T.Paragraph}]
-          },
-          {
-            T: T.ListItem,
-            C: [{T: T.Paragraph}]
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.EnumeratedList,
+          A: { style: {
+            t: 'lowercase_roman_num',
+            prefix: '(',
+            suffix: ')'
+          }},
+          C: [
+            {
+              T: T.ListItem,
+              C: [{T: T.Paragraph}]
+            },
+            {
+              T: T.ListItem,
+              C: [{T: T.Paragraph}]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a EnumeratedList with items')

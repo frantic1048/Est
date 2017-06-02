@@ -33,8 +33,9 @@ test('single line', t => {
 
 - item3`, {tracer})
   const expected = {
-    ast: [
-      {
+    ast: {
+      T: T.Document,
+      C: [{
         T: T.BulletList,
         C: [
           {
@@ -47,8 +48,8 @@ test('single line', t => {
             T: T.ListItem
           }
         ]
-      }
-    ]
+      }]
+    }
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -61,8 +62,9 @@ test('two line paragraph', t => {
 
 - item2`, {tracer})
   const expected = {
-    ast: [
-      {
+    ast: {
+      T: T.Document,
+      C: [{
         T: T.BulletList,
         C: [
           {
@@ -75,8 +77,8 @@ test('two line paragraph', t => {
             T: T.ListItem
           }
         ]
-      }
-    ]
+      }]
+    }
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -91,23 +93,25 @@ test('two paragraph in one item', t => {
 
 - item2`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.BulletList,
-        C: [
-          {
-            T: T.ListItem,
-            C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.BulletList,
+          C: [
+            {
+              T: T.ListItem,
+              C: [
               {T: T.Paragraph},
               {T: T.Paragraph}
-            ]
-          },
-          {
-            T: T.ListItem
-          }
-        ]
-      }
-    ]
+              ]
+            },
+            {
+              T: T.ListItem
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -118,15 +122,17 @@ test('end with extra NewLine', t => {
   const actual = parse(`- para1
 `, {tracer})
   const expected = {
-    ast: [{
-      T: T.BulletList,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.ListItem,
+        T: T.BulletList,
         C: [{
-          T: T.Paragraph
+          T: T.ListItem,
+          C: [{
+            T: T.Paragraph
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -144,31 +150,33 @@ test('cascading sublist', t => {
 
 - 2.1`, {tracer})
   const expected = {
-    ast: [{
-      T: T.BulletList,
-      C: [
-        {
-          T: T.ListItem,
-          C: [
+    ast: {
+      T: T.Document,
+      C: [{
+        T: T.BulletList,
+        C: [
+          {
+            T: T.ListItem,
+            C: [
             {T: T.Paragraph},
-            {
-              T: T.BulletList,
-              C: [
+              {
+                T: T.BulletList,
+                C: [
                 {T: T.ListItem},
-                {
-                  T: T.ListItem,
-                  C: [{
-                    T: T.BulletList,
-                    C: [{T: T.ListItem}]
-                  }]
-                }
-              ]
-            }]
-        },
-        {
-          T: T.ListItem
-        }]
-    }]
+                  {
+                    T: T.ListItem,
+                    C: [{
+                      T: T.BulletList,
+                      C: [{T: T.ListItem}]
+                    }]
+                  }
+                ]
+              }]
+          },
+          {
+            T: T.ListItem
+          }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -179,18 +187,20 @@ test('optional NewLine between items', t => {
   const actual = parse(`- 1.1
 - 2.1`, {tracer})
   const expected = {
-    ast: [{
-      T: T.BulletList,
-      C: [
-        {
-          T: T.ListItem,
-          C: [{T: T.Paragraph}]
-        },
-        {
-          T: T.ListItem,
-          C: [{T: T.Paragraph}]
-        }]
-    }]
+    ast: {
+      T: T.Document,
+      C: [{
+        T: T.BulletList,
+        C: [
+          {
+            T: T.ListItem,
+            C: [{T: T.Paragraph}]
+          },
+          {
+            T: T.ListItem,
+            C: [{T: T.Paragraph}]
+          }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')
@@ -205,18 +215,20 @@ test('many extra NewLine between items', t => {
 
 - 2.1`, {tracer})
   const expected = {
-    ast: [{
-      T: T.BulletList,
-      C: [
-        {
-          T: T.ListItem,
-          C: [{T: T.Paragraph}]
-        },
-        {
-          T: T.ListItem,
-          C: [{T: T.Paragraph}]
-        }]
-    }]
+    ast: {
+      T: T.Document,
+      C: [{
+        T: T.BulletList,
+        C: [
+          {
+            T: T.ListItem,
+            C: [{T: T.Paragraph}]
+          },
+          {
+            T: T.ListItem,
+            C: [{T: T.Paragraph}]
+          }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'should parse a BulletList with items')

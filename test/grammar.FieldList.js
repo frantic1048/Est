@@ -29,35 +29,37 @@ test('simple', t => {
   const tracer = t.context.tracer
   const actual = parse(`:fname: fff`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.FieldList,
-        C: [
-          {
-            T: T.Field,
-            C: [
-              {
-                T: T.FieldName,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'fname'}
-                }]
-              },
-              {
-                T: T.FieldBody,
-                C: [{
-                  T: T.Paragraph,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.FieldList,
+          C: [
+            {
+              T: T.Field,
+              C: [
+                {
+                  T: T.FieldName,
                   C: [{
                     T: T.Text,
-                    A: {'value': 'fff'}
+                    A: {'value': 'fname'}
                   }]
-                }]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                },
+                {
+                  T: T.FieldBody,
+                  C: [{
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'fff'}
+                    }]
+                  }]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a FieldList')
@@ -73,58 +75,60 @@ test('complex', t => {
   parara
 :fn3: fbody3`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.FieldList,
-        C: [
-          {
-            T: T.Field,
-            C: [
-              {
-                T: T.FieldName,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'fn1'}
-                }]
-              },
-              {
-                T: T.FieldBody,
-                C: [{
-                  T: T.Paragraph,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.FieldList,
+          C: [
+            {
+              T: T.Field,
+              C: [
+                {
+                  T: T.FieldName,
                   C: [{
                     T: T.Text,
-                    A: {'value': 'fff'}
+                    A: {'value': 'fn1'}
                   }]
-                }]
-              }
-            ]
-          },
-          {
-            T: T.Field,
-            C: [
+                },
+                {
+                  T: T.FieldBody,
+                  C: [{
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'fff'}
+                    }]
+                  }]
+                }
+              ]
+            },
+            {
+              T: T.Field,
+              C: [
               {T: T.FieldName},
-              {
-                T: T.FieldBody,
-                C: [
+                {
+                  T: T.FieldBody,
+                  C: [
                   {T: T.BulletList},
                   {T: T.Paragraph}
-                ]
-              }
-            ]
-          },
-          {
-            T: T.Field,
-            C: [
+                  ]
+                }
+              ]
+            },
+            {
+              T: T.Field,
+              C: [
               {T: T.FieldName},
-              {
-                T: T.FieldBody,
-                C: [{T: T.Paragraph}]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                {
+                  T: T.FieldBody,
+                  C: [{T: T.Paragraph}]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a FieldList')

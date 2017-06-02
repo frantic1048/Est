@@ -29,16 +29,18 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('**strongemphasis**', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.StrongEmphasis,
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'strongemphasis' }
+          T: T.StrongEmphasis,
+          C: [{
+            T: T.Text,
+            A: { value: 'strongemphasis' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse strong emphasis')
 })
@@ -49,22 +51,24 @@ test('sequence', t => {
     '**strongemphasis** **strongemphasis**',
     {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.StrongEmphasis,
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'strongemphasis' }
-        }]
-      }, {
-        T: T.StrongEmphasis,
-        C: [{
-          T: T.Text,
-          A: { value: 'strongemphasis' }
-        }]
-      }
-      ]
-    }]}
+          T: T.StrongEmphasis,
+          C: [{
+            T: T.Text,
+            A: { value: 'strongemphasis' }
+          }]
+        }, {
+          T: T.StrongEmphasis,
+          C: [{
+            T: T.Text,
+            A: { value: 'strongemphasis' }
+          }]
+        }
+        ]
+      }]}}
   t.true(isMatch(actual, expected), 'should parse strong emphasis')
 })

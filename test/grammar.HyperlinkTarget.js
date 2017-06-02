@@ -29,13 +29,15 @@ test('internal', t => {
   const tracer = t.context.tracer
   const actual = parse('.. _naaa:', {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': 'naaa'},
-        C: []
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': 'naaa'},
+          C: []
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -45,13 +47,15 @@ test('internal: complex name', t => {
   const tracer = t.context.tracer
   const actual = parse('.. _`naaa  a`:', {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': 'naaa  a'},
-        C: []
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': 'naaa  a'},
+          C: []
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -61,16 +65,18 @@ test('external: normal', t => {
   const tracer = t.context.tracer
   const actual = parse('.. _SIG2D: http://sig2d.org/', {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': 'SIG2D'},
-        C: [{
-          T: T.Text,
-          A: {'value': 'http://sig2d.org/'}
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': 'SIG2D'},
+          C: [{
+            T: T.Text,
+            A: {'value': 'http://sig2d.org/'}
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -83,16 +89,18 @@ test('external: multiplel lines', t => {
    w
    w.pixiv.net/`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': '[pixiv]'},
-        C: [{
-          T: T.Text,
-          A: {'value': 'https://www.pixiv.net/'}
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': '[pixiv]'},
+          C: [{
+            T: T.Text,
+            A: {'value': 'https://www.pixiv.net/'}
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -102,20 +110,22 @@ test('indirect: normal', t => {
   const tracer = t.context.tracer
   const actual = parse('.. _Gochiusa: gochiusa_site_', {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': 'Gochiusa'},
-        C: [{
-          T: T.NamedHyperlink,
-          A: {'name': 'gochiusa_site'},
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': 'Gochiusa'},
           C: [{
-            T: T.Text,
-            A: {'value': 'gochiusa_site'}
+            T: T.NamedHyperlink,
+            A: {'name': 'gochiusa_site'},
+            C: [{
+              T: T.Text,
+              A: {'value': 'gochiusa_site'}
+            }]
           }]
-        }]
-      }
-    ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -126,28 +136,30 @@ test('continuous', t => {
   const actual = parse(`.. _\`Miss You by Ento 🐺\`: miss_you_
 .. _\`【Sharlo】なんでもないや -piano arrange-\`: https://soundcloud.com/sharlosharlo/nan_demo_naiya`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        A: {'name': 'Miss You by Ento 🐺'},
-        C: [{
-          T: T.NamedHyperlink,
-          A: {'name': 'miss_you'},
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          A: {'name': 'Miss You by Ento 🐺'},
+          C: [{
+            T: T.NamedHyperlink,
+            A: {'name': 'miss_you'},
+            C: [{
+              T: T.Text,
+              A: {'value': 'miss_you'}
+            }]
+          }]
+        },
+        {
+          T: T.Target,
+          A: {'name': '【Sharlo】なんでもないや -piano arrange-'},
           C: [{
             T: T.Text,
-            A: {'value': 'miss_you'}
+            A: {'value': 'https://soundcloud.com/sharlosharlo/nan_demo_naiya'}
           }]
-        }]
-      },
-      {
-        T: T.Target,
-        A: {'name': '【Sharlo】なんでもないや -piano arrange-'},
-        C: [{
-          T: T.Text,
-          A: {'value': 'https://soundcloud.com/sharlosharlo/nan_demo_naiya'}
-        }]
-      }
-    ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')
@@ -157,15 +169,17 @@ test('anonymous', t => {
   const tracer = t.context.tracer
   const actual = parse('.. __: https://soundcloud.com/shadic-the-hedgehog/usao-miracle-5ympho-x-extended-mix', {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Target,
-        C: [{
-          T: T.Text,
-          A: {'value': 'https://soundcloud.com/shadic-the-hedgehog/usao-miracle-5ympho-x-extended-mix'}
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Target,
+          C: [{
+            T: T.Text,
+            A: {'value': 'https://soundcloud.com/shadic-the-hedgehog/usao-miracle-5ympho-x-extended-mix'}
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Target')

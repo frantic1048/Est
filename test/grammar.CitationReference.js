@@ -29,13 +29,15 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('[CIT1204]_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.CitationReference,
-        A: { name: 'CIT1204' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.CitationReference,
+          A: { name: 'CIT1204' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse citation reference')
 })

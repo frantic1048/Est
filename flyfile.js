@@ -28,6 +28,8 @@ exports.test = function* test (fly) {
   // yield fly.source(testSrc).ava()
   spawn('./node_modules/ava/cli.js',
     ['-v', '--no-power-assert'],
+    // for heavy test
+    // ['--serial', '--fail-fast', '--no-power-assert'],
     { stdio: 'inherit' })
 }
 

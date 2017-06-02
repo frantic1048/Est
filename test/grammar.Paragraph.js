@@ -32,19 +32,21 @@ test('normal', t => {
 p21
 p22`, {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.Text,
-        A: { value: 'p1' }
-      }]
-    }, {
-      T: T.Paragraph,
-      C: [{
-        T: T.Text,
-        A: { value: 'p21p22' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.Text,
+          A: { value: 'p1' }
+        }]
+      }, {
+        T: T.Paragraph,
+        C: [{
+          T: T.Text,
+          A: { value: 'p21p22' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse two paragraph')
 })

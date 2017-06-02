@@ -29,13 +29,15 @@ test('numbered', t => {
   const tracer = t.context.tracer
   const actual = parse('[3]_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.FootnoteReference,
-        A: { ref: '3' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.FootnoteReference,
+          A: { ref: '3' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse footnote reference')
 })
@@ -44,13 +46,15 @@ test('auto numbered', t => {
   const tracer = t.context.tracer
   const actual = parse('[#]_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.FootnoteReference,
-        A: { ref: '#' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.FootnoteReference,
+          A: { ref: '#' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse footnote reference')
 })
@@ -59,13 +63,15 @@ test('auto numbered with label', t => {
   const tracer = t.context.tracer
   const actual = parse('[#yaya]_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.FootnoteReference,
-        A: { ref: '#yaya' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.FootnoteReference,
+          A: { ref: '#yaya' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse footnote reference')
 })
@@ -74,13 +80,15 @@ test('auto symbol', t => {
   const tracer = t.context.tracer
   const actual = parse('[*]_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.FootnoteReference,
-        A: { ref: '*' }
-      }]
-    }]
+        T: T.Paragraph,
+        C: [{
+          T: T.FootnoteReference,
+          A: { ref: '*' }
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse footnote reference')
 })

@@ -30,19 +30,21 @@ test('simple', t => {
   const actual = parse(`.. [#note] Text of note
     eeee`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Footnote,
-        A: {'ref': '#note'},
-        C: [{
-          T: T.Paragraph,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Footnote,
+          A: {'ref': '#note'},
           C: [{
-            T: T.Text,
-            A: {'value': 'Text of noteeeee'}
+            T: T.Paragraph,
+            C: [{
+              T: T.Text,
+              A: {'value': 'Text of noteeeee'}
+            }]
           }]
-        }]
-      }
-    ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Footnote')
@@ -55,16 +57,18 @@ test('complex', t => {
 
     - yaaa`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Footnote,
-        A: {'ref': '#note'},
-        C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Footnote,
+          A: {'ref': '#note'},
+          C: [
           { T: T.Paragraph },
           { T: T.BulletList }
-        ]
-      }
-    ]
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Footnote')

@@ -31,28 +31,30 @@ test('arg, content', t => {
    Cont
    ent`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Directive,
-        A: {'type': 'da'},
-        C: [
-          {
-            T: T.DirectiveArgument,
-            C: [{
-              T: T.Text,
-              A: {'value': 'arg'}
-            }]
-          },
-          {
-            T: T.DirectiveContent,
-            C: [{
-              T: T.Text,
-              A: {'value': 'Content'}
-            }]
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Directive,
+          A: {'type': 'da'},
+          C: [
+            {
+              T: T.DirectiveArgument,
+              C: [{
+                T: T.Text,
+                A: {'value': 'arg'}
+              }]
+            },
+            {
+              T: T.DirectiveContent,
+              C: [{
+                T: T.Text,
+                A: {'value': 'Content'}
+              }]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Directive')
@@ -66,25 +68,27 @@ test('option, content', t => {
    Cont
    ent`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Directive,
-        A: {'type': 'da'},
-        C: [
-          {
-            T: T.DirectiveOption,
-            C: [{ T: T.FieldList }]
-          },
-          {
-            T: T.DirectiveContent,
-            C: [{
-              T: T.Text,
-              A: {'value': 'Content'}
-            }]
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Directive,
+          A: {'type': 'da'},
+          C: [
+            {
+              T: T.DirectiveOption,
+              C: [{ T: T.FieldList }]
+            },
+            {
+              T: T.DirectiveContent,
+              C: [{
+                T: T.Text,
+                A: {'value': 'Content'}
+              }]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Directive')
@@ -96,25 +100,27 @@ test('arg, option', t => {
    :opt: 10
    :opt2: 30`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Directive,
-        A: {'type': 'da'},
-        C: [
-          {
-            T: T.DirectiveArgument,
-            C: [{
-              T: T.Text,
-              A: {'value': 'arg'}
-            }]
-          },
-          {
-            T: T.DirectiveOption,
-            C: [{ T: T.FieldList }]
-          }
-        ]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Directive,
+          A: {'type': 'da'},
+          C: [
+            {
+              T: T.DirectiveArgument,
+              C: [{
+                T: T.Text,
+                A: {'value': 'arg'}
+              }]
+            },
+            {
+              T: T.DirectiveOption,
+              C: [{ T: T.FieldList }]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Directive')
@@ -124,12 +130,14 @@ test('bare', t => {
   const tracer = t.context.tracer
   const actual = parse(`.. da::`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.Directive,
-        A: {'type': 'da'}
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.Directive,
+          A: {'type': 'da'}
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a Directive')

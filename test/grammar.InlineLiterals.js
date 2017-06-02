@@ -29,16 +29,18 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('``inline literals``', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InlineLiterals,
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'inline literals' }
+          T: T.InlineLiterals,
+          C: [{
+            T: T.Text,
+            A: { value: 'inline literals' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InlineLiterals')
 })
@@ -49,22 +51,24 @@ test('sequence', t => {
     '``inline literals`` ``inline literals``',
     {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InlineLiterals,
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'inline literals' }
+          T: T.InlineLiterals,
+          C: [{
+            T: T.Text,
+            A: { value: 'inline literals' }
+          }]
+        }, {
+          T: T.InlineLiterals,
+          C: [{
+            T: T.Text,
+            A: { value: 'inline literals' }
+          }]
         }]
-      }, {
-        T: T.InlineLiterals,
-        C: [{
-          T: T.Text,
-          A: { value: 'inline literals' }
-        }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InlineLiterals')
 })

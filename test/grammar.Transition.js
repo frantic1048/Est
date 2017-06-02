@@ -29,9 +29,11 @@ function macro (t, input, _expected) {
   const tracer = t.context.tracer
   const actual = parse(input, {tracer})
   const expected = {
-    ast: [{
-      T: T.Transition
-    }]
+    ast: {
+      T: T.Document,
+      C: [{
+        T: T.Transition
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse Transition')
 }

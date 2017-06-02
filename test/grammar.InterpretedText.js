@@ -29,16 +29,18 @@ test('normal', t => {
   const tracer = t.context.tracer
   const actual = parse('`interpreted text`', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InterpretedText,
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'interpreted text' }
+          T: T.InterpretedText,
+          C: [{
+            T: T.Text,
+            A: { value: 'interpreted text' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InterpretedText')
 })
@@ -47,19 +49,21 @@ test('with plain text', t => {
   const tracer = t.context.tracer
   const actual = parse('this is `interpreted text`', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.Text,
-        A: { value: 'this is ' }
-      }, {
-        T: T.InterpretedText,
+        T: T.Paragraph,
         C: [{
           T: T.Text,
-          A: { value: 'interpreted text' }
+          A: { value: 'this is ' }
+        }, {
+          T: T.InterpretedText,
+          C: [{
+            T: T.Text,
+            A: { value: 'interpreted text' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InterpretedText')
 })
@@ -68,17 +72,19 @@ test('prefix role', t => {
   const tracer = t.context.tracer
   const actual = parse(':rr:`interpreted text`', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InterpretedText,
-        A: { role: 'rr' },
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'interpreted text' }
+          T: T.InterpretedText,
+          A: { role: 'rr' },
+          C: [{
+            T: T.Text,
+            A: { value: 'interpreted text' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InterpretedText with prefix role')
 })
@@ -87,17 +93,19 @@ test('suffix role', t => {
   const tracer = t.context.tracer
   const actual = parse('`interpreted text`:rr:', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.InterpretedText,
-        A: { role: 'rr' },
+        T: T.Paragraph,
         C: [{
-          T: T.Text,
-          A: { value: 'interpreted text' }
+          T: T.InterpretedText,
+          A: { role: 'rr' },
+          C: [{
+            T: T.Text,
+            A: { value: 'interpreted text' }
+          }]
         }]
-      }]
-    }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse InterpretedText with suffix role')
 })

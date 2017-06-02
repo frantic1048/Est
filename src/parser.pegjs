@@ -101,7 +101,7 @@ Document
     bb:((NewLine HyperlinkTarget)
        /(BlankLine BodyElement))*
     NewLine*
-  {return flatten([b, bb])}
+  {return ast(T.Document).add(flatten([b, bb]).filter(astyFilter))}
 
 BodyElement "BodyElement"
   = Section

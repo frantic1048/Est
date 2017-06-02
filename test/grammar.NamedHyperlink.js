@@ -29,21 +29,23 @@ test('implicit', t => {
   const tracer = t.context.tracer
   const actual = parse('RFC-2324_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.NamedHyperlink,
-        A: { name: 'RFC-2324' },
-        C: [
-          {
-            T: T.Text,
-            A: {
-              value: 'RFC-2324'
+        T: T.Paragraph,
+        C: [{
+          T: T.NamedHyperlink,
+          A: { name: 'RFC-2324' },
+          C: [
+            {
+              T: T.Text,
+              A: {
+                value: 'RFC-2324'
+              }
             }
-          }
-        ]
-      }]
-    }]
+          ]
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'shoulp parse implicit named hyperlink')
@@ -53,21 +55,23 @@ test('explicit', t => {
   const tracer = t.context.tracer
   const actual = parse('`RFC 2324`_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.NamedHyperlink,
-        A: { name: 'RFC 2324' },
-        C: [
-          {
-            T: T.Text,
-            A: {
-              value: 'RFC 2324'
+        T: T.Paragraph,
+        C: [{
+          T: T.NamedHyperlink,
+          A: { name: 'RFC 2324' },
+          C: [
+            {
+              T: T.Text,
+              A: {
+                value: 'RFC 2324'
+              }
             }
-          }
-        ]
-      }]
-    }]
+          ]
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected),
     'shoulp parse explicit named hyperlink')
@@ -77,21 +81,23 @@ test('with named reference', t => {
   const tracer = t.context.tracer
   const actual = parse('`香風 智乃<Kafuu Chino_>`_', {tracer})
   const expected = {
-    ast: [{
-      T: T.Paragraph,
+    ast: {
+      T: T.Document,
       C: [{
-        T: T.NamedHyperlink,
-        A: { name: 'Kafuu Chino' },
-        C: [
-          {
-            T: T.Text,
-            A: {
-              value: '香風 智乃'
+        T: T.Paragraph,
+        C: [{
+          T: T.NamedHyperlink,
+          A: { name: 'Kafuu Chino' },
+          C: [
+            {
+              T: T.Text,
+              A: {
+                value: '香風 智乃'
+              }
             }
-          }
-        ]
-      }]
-    }]
+          ]
+        }]
+      }]}
   }
   t.true(isMatch(actual, expected), 'should parse embbed URI hyperlink')
 })

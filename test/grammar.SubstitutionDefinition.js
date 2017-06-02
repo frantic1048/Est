@@ -29,25 +29,27 @@ test('single line', t => {
   const tracer = t.context.tracer
   const actual = parse(`.. |sub| da:: arg`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.SubstitutionDefinition,
-        A: {'name': 'sub'},
-        C: [{
-          T: T.Directive,
-          A: {'type': 'da'},
-          C: [
-            {
-              T: T.DirectiveArgument,
-              C: [{
-                T: T.Text,
-                A: {'value': 'arg'}
-              }]
-            }
-          ]
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.SubstitutionDefinition,
+          A: {'name': 'sub'},
+          C: [{
+            T: T.Directive,
+            A: {'type': 'da'},
+            C: [
+              {
+                T: T.DirectiveArgument,
+                C: [{
+                  T: T.Text,
+                  A: {'value': 'arg'}
+                }]
+              }
+            ]
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a SubstitutionDefinition')
@@ -61,36 +63,38 @@ test('multiple lines', t => {
    Cont
    ent`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.SubstitutionDefinition,
-        A: {'name': 'sub'},
-        C: [{
-          T: T.Directive,
-          A: {'type': 'da'},
-          C: [
-            {
-              T: T.DirectiveArgument,
-              C: [{
-                T: T.Text,
-                A: {'value': 'arg'}
-              }]
-            },
-            {
-              T: T.DirectiveOption,
-              C: [{ T: T.FieldList }]
-            },
-            {
-              T: T.DirectiveContent,
-              C: [{
-                T: T.Text,
-                A: {'value': 'Content'}
-              }]
-            }
-          ]
-        }]
-      }
-    ]
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.SubstitutionDefinition,
+          A: {'name': 'sub'},
+          C: [{
+            T: T.Directive,
+            A: {'type': 'da'},
+            C: [
+              {
+                T: T.DirectiveArgument,
+                C: [{
+                  T: T.Text,
+                  A: {'value': 'arg'}
+                }]
+              },
+              {
+                T: T.DirectiveOption,
+                C: [{ T: T.FieldList }]
+              },
+              {
+                T: T.DirectiveContent,
+                C: [{
+                  T: T.Text,
+                  A: {'value': 'Content'}
+                }]
+              }
+            ]
+          }]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a SubstitutionDefinition')

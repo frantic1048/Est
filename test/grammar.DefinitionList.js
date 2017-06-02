@@ -30,35 +30,37 @@ test('simple', t => {
   const actual = parse(`term
     def`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.DefinitionList,
-        C: [
-          {
-            T: T.DefinitionListItem,
-            C: [
-              {
-                T: T.DefinitionListTerm,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'term'}
-                }]
-              },
-              {
-                T: T.DefinitionListDefinition,
-                C: [{
-                  T: T.Paragraph,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.DefinitionList,
+          C: [
+            {
+              T: T.DefinitionListItem,
+              C: [
+                {
+                  T: T.DefinitionListTerm,
                   C: [{
                     T: T.Text,
-                    A: {'value': 'def'}
+                    A: {'value': 'term'}
                   }]
-                }]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                },
+                {
+                  T: T.DefinitionListDefinition,
+                  C: [{
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'def'}
+                    }]
+                  }]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a DefinitionList')
@@ -69,58 +71,60 @@ test('classifier', t => {
   const actual = parse(`term :cls1 :*cls2* sss
     def`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.DefinitionList,
-        C: [
-          {
-            T: T.DefinitionListItem,
-            C: [
-              {
-                T: T.DefinitionListTerm,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'term'}
-                }]
-              },
-              {
-                T: T.DefinitionListClassifier,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'cls1'}
-                }]
-              },
-              {
-                T: T.DefinitionListClassifier,
-                C: [
-                  {
-                    T: T.Emphasis,
-                    C: [{
-                      T: T.Text,
-                      A: {'value': 'cls2'}
-                    }]
-                  },
-                  {
-                    T: T.Text,
-                    A: {'value': ' sss'}
-                  }
-                ]
-              },
-              {
-                T: T.DefinitionListDefinition,
-                C: [{
-                  T: T.Paragraph,
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.DefinitionList,
+          C: [
+            {
+              T: T.DefinitionListItem,
+              C: [
+                {
+                  T: T.DefinitionListTerm,
                   C: [{
                     T: T.Text,
-                    A: {'value': 'def'}
+                    A: {'value': 'term'}
                   }]
-                }]
-              }
-            ]
-          }
-        ]
-      }
-    ]
+                },
+                {
+                  T: T.DefinitionListClassifier,
+                  C: [{
+                    T: T.Text,
+                    A: {'value': 'cls1'}
+                  }]
+                },
+                {
+                  T: T.DefinitionListClassifier,
+                  C: [
+                    {
+                      T: T.Emphasis,
+                      C: [{
+                        T: T.Text,
+                        A: {'value': 'cls2'}
+                      }]
+                    },
+                    {
+                      T: T.Text,
+                      A: {'value': ' sss'}
+                    }
+                  ]
+                },
+                {
+                  T: T.DefinitionListDefinition,
+                  C: [{
+                    T: T.Paragraph,
+                    C: [{
+                      T: T.Text,
+                      A: {'value': 'def'}
+                    }]
+                  }]
+                }
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a DefinitionList')
@@ -136,45 +140,47 @@ test('complex definition', t => {
 term2
     def2`, {tracer})
   const expected = {
-    ast: [
-      {
-        T: T.DefinitionList,
-        C: [
-          {
-            T: T.DefinitionListItem,
-            C: [
-              {
-                T: T.DefinitionListTerm,
-                C: [{
-                  T: T.Text,
-                  A: {'value': 'term'}
-                }]
-              },
-              {
-                T: T.DefinitionListDefinition,
-                C: [
-                  {
-                    T: T.BulletList,
-                    C: [
+    ast: {
+      T: T.Document,
+      C: [
+        {
+          T: T.DefinitionList,
+          C: [
+            {
+              T: T.DefinitionListItem,
+              C: [
+                {
+                  T: T.DefinitionListTerm,
+                  C: [{
+                    T: T.Text,
+                    A: {'value': 'term'}
+                  }]
+                },
+                {
+                  T: T.DefinitionListDefinition,
+                  C: [
+                    {
+                      T: T.BulletList,
+                      C: [
                     {T: T.ListItem},
                     {T: T.ListItem}
-                    ]
-                  },
+                      ]
+                    },
                 {T: T.Paragraph}
-                ]
-              }
-            ]
-          },
-          {
-            T: T.DefinitionListItem,
-            C: [
+                  ]
+                }
+              ]
+            },
+            {
+              T: T.DefinitionListItem,
+              C: [
               {T: T.DefinitionListTerm},
               {T: T.DefinitionListDefinition}
-            ]
-          }
-        ]
-      }
-    ]
+              ]
+            }
+          ]
+        }
+      ]}
   }
   t.true(isMatch(actual, expected),
     'should parse a DefinitionList')
