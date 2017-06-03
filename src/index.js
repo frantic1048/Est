@@ -1,10 +1,13 @@
 const tokenTypes = require('./tokenTypes')
-const render = require('./render')
 const parse = require('./parse')
+const transform = require('./transform')
+const render = require('./render')
+
+exports.tokenTypes = tokenTypes
 
 exports.parse = parse
 
-exports.tokenTypes = tokenTypes
+exports.transform = transform
 
 exports.render = render
 

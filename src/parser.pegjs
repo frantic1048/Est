@@ -97,9 +97,10 @@
 
 Document
 // contains block level token
-  = b:(HyperlinkTarget / BodyElement)
-    bb:((NewLine HyperlinkTarget)
-       /(BlankLine BodyElement))*
+  = b:(HyperlinkTargets / BodyElement)
+    bb:(BlankLine
+        ( HyperlinkTargets / BodyElement )
+    )*
     NewLine*
   {return ast(T.Document).add(flatten([b, bb]).filter(astyFilter))}
 
@@ -588,6 +589,9 @@ Citation "Citation"
         .add(unroll(b, bb, 3))
         .set('name', t)
     }
+
+HyperlinkTargets
+ = HyperlinkTarget (NewLine+ HyperlinkTarget)*
 
 HyperlinkTarget "HyperlinkTarget"
   = ExplicitMarkupStart
