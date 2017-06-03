@@ -1,7 +1,7 @@
 {
     const unroll = options.util.makeUnroll(location, options)
     const ast = options.util.makeAST(location, options)
-    const T = require('./').tokenTypes
+    const T = require('./tokenTypes')
 
     // manage indent state
     // ONLY call indent() in &{} predicate,
