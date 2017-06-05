@@ -11,4 +11,4 @@ exports.transform = transform
 
 exports.render = render
 
-exports.rst2html = s => render(parse(s).ast)
+exports.rst2html = s => render(transform(parse(s).ast))
