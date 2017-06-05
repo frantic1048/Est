@@ -14,16 +14,25 @@ const sanitizeHtml = require('sanitize-html')
 
 const T = require('../tokenTypes')
 
+const sanitize = s => sanitizeHtml(s,
+  {
+    allowedTags: [],
+    allowedAttributes: []
+  })
+
 const targets = new Map()
+const anonymousTargets = []
 const sectionLevelOfStyles = new Map()
 
 function walker1 (node, depth, parent, when) {
   if (node.T === T.Target) {
-    if (node.C[0].T === T.Text) {
-      targets.set(node.A.name,
-        sanitizeHtml(node.C[0].A.value,
-          {allowedTags: [],
-            allowedAttributes: []}))
+    if (node.C[0].T === T.Text) { // hyperlink definition with a direct link
+      if (node.A.name) { // named hyperlink definition
+        targets.set(node.A.name,
+          sanitize(node.C[0].A.value))
+      } else { // anonymous hyperlink definition
+        anonymousTargets.push(sanitize(node.C[0].A.value))
+      }
     }
   } else if (node.T === T.Section) {
     if (!sectionLevelOfStyles.has(node.A.style)) {
@@ -42,6 +51,13 @@ function walker2 (node, depth, parent, when) {
     } else {
       // unknown reference name
       // throw error
+    }
+  } else if (node.T === T.AnonymousHyperlink) {
+    if (!node.A.ref) { // dose not have embed URI
+      // TODO: assert anonymousTargets.length > 0
+
+      // consume an anonymousTarget
+      node.set('ref', anonymousTargets.pop())
     }
   } else if (node.T === T.Section) {
     node.set('level', sectionLevelOfStyles.get(node.A.style))
