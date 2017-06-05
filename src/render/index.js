@@ -37,7 +37,8 @@ module.exports = function render (node) {
     prefix = '<p>'
     suffix = '</p>'
   } else if (node.T === T.NamedHyperlink ||
-             node.T === T.StandAloneHyperlink) {
+             node.T === T.StandAloneHyperlink ||
+             node.T === T.AnonymousHyperlink) {
     prefix = `<a href="${sanitize(node.A.ref)}">`
     suffix = '</a>'
   } else if (node.T === T.Transition) {
