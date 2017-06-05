@@ -84,6 +84,7 @@ test('simple', t => {
                         }]
                       }]
                     },
+                    { T: T.OptionDelimiter },
                     {
                       T: T.Option,
                       C: [

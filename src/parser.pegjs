@@ -502,6 +502,7 @@ OptionGroup "OptionGroup"
 
     oo.forEach(elt => {
       len += 2 + elt[1]
+      node.add(ast(T.OptionDelimiter))
       node.add(elt[1].node)
     })
 

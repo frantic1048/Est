@@ -27,6 +27,7 @@ module.exports = {
   OptionListItem: Symbol('OptionListItem'),
   OptionGroup: Symbol('OptionGroup'),
   Option: Symbol('Option'),
+  OptionDelimiter: Symbol('OptionDelimiter'),
   OptionString: Symbol('OptionString'),
   OptionArgument: Symbol('OptionArgument'),
   OptionDescription: Symbol('OptionDescription'),
