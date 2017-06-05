@@ -42,6 +42,9 @@ module.exports = function render (node) {
     suffix = '</a>'
   } else if (node.T === T.Transition) {
     prefix = '<hr>'
+  } else if (node.T === T.InlineLiterals) {
+    prefix = '<code>'
+    suffix = '</code>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
