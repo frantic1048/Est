@@ -85,6 +85,18 @@ module.exports = function render (node) {
   } else if (node.T === T.Section) {
     prefix = `<h${node.A.level}>`
     suffix = `</h${node.A.level}>`
+  } else if (node.T === T.FieldList) {
+    prefix = '<table><colgroup><col><col></colgroup><tbody>'
+    suffix = '</tbody></table>'
+  } else if (node.T === T.Field) {
+    prefix = '<tr>'
+    suffix = '</tr>'
+  } else if (node.T === T.FieldName) {
+    prefix = '<th>'
+    suffix = '</th>'
+  } else if (node.T === T.FieldBody) {
+    prefix = '<td>'
+    suffix = '</td>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
