@@ -39,6 +39,8 @@ module.exports = function render (node) {
   } else if (node.T === T.NamedHyperlink) {
     prefix = `<a href="${sanitize(node.A.ref)}">`
     suffix = '</a>'
+  } else if (node.T === T.Transition) {
+    prefix = '<hr>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
