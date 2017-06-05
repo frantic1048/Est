@@ -15,6 +15,7 @@ const sanitizeHtml = require('sanitize-html')
 const T = require('../tokenTypes')
 
 const targets = new Map()
+const sectionLevelOfStyles = new Map()
 
 function walker1 (node, depth, parent, when) {
   if (node.T === T.Target) {
@@ -23,6 +24,12 @@ function walker1 (node, depth, parent, when) {
         sanitizeHtml(node.C[0].A.value,
           {allowedTags: [],
             allowedAttributes: []}))
+    }
+  } else if (node.T === T.Section) {
+    if (!sectionLevelOfStyles.has(node.A.style)) {
+      // new style, set a new level for it
+      const level = sectionLevelOfStyles.size + 1
+      sectionLevelOfStyles.set(node.A.style, level)
     }
   }
   return node
@@ -36,6 +43,8 @@ function walker2 (node, depth, parent, when) {
       // unknown reference name
       // throw error
     }
+  } else if (node.T === T.Section) {
+    node.set('level', sectionLevelOfStyles.get(node.A.style))
   }
   return node
 }
