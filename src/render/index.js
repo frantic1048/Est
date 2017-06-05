@@ -2,6 +2,11 @@ const sanitizeHtml = require('sanitize-html')
 
 const T = require('../tokenTypes')
 
+const sanitize = s => sanitizeHtml(s,
+  {
+    allowedTags: [],
+    allowedAttributes: []
+  })
 /**
  * recursively render an ASTy node to HTML string
  * @param  {ASTYNode}  input ASTy node
@@ -18,9 +23,7 @@ module.exports = function render (node) {
   let prefix = ''
   let suffix = ''
   if (node.T === T.Text) {
-    prefix = sanitizeHtml(node.A.value,
-      {allowedTags: [],
-        allowedAttributes: []})
+    prefix = sanitize(node.A.value)
   } else if (node.T === T.Emphasis) {
     prefix = '<em>'
     suffix = '</em>'
@@ -33,6 +36,9 @@ module.exports = function render (node) {
   } else if (node.T === T.Paragraph) {
     prefix = '<p>'
     suffix = '</p>'
+  } else if (node.T === T.NamedHyperlink) {
+    prefix = `<a href="${sanitize(node.A.ref)}">`
+    suffix = '</a>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
