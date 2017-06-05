@@ -81,6 +81,9 @@ module.exports = function render (node) {
   } else if (node.T === T.DefinitionListDefinition) {
     prefix = '<dd>'
     suffix = '</dd>'
+  } else if (node.T === T.Section) {
+    prefix = `<h${node.A.level}>`
+    suffix = `</h${node.A.level}>`
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
