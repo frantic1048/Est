@@ -45,6 +45,12 @@ module.exports = function render (node) {
   } else if (node.T === T.InlineLiterals) {
     prefix = '<code>'
     suffix = '</code>'
+  } else if (node.T === T.BulletList) {
+    prefix = '<ul>'
+    suffix = '</ul>'
+  } else if (node.T === T.ListItem) {
+    prefix = '<li>'
+    suffix = '</li>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
