@@ -51,6 +51,27 @@ module.exports = function render (node) {
   } else if (node.T === T.ListItem) {
     prefix = '<li>'
     suffix = '</li>'
+  } else if (node.T === T.OptionList) {
+    prefix = '<table><colgroup><col><col></colgroup><tbody>'
+    suffix = '</tbody></table>'
+  } else if (node.T === T.OptionListItem) {
+    prefix = '<tr>'
+    suffix = '</tr>'
+  } else if (node.T === T.OptionGroup) {
+    prefix = '<td><kbd>'
+    suffix = '</kbd></td>'
+  } else if (node.T === T.OptionDescription) {
+    prefix = '<td>'
+    suffix = '</td>'
+  } else if (node.T === T.Option) {
+    // no special tag
+  } else if (node.T === T.OptionString) {
+    // no special tag
+  } else if (node.T === T.OptionArgument) {
+    prefix = '<var>'
+    suffix = '</var>'
+  } else if (node.T === T.OptionDelimiter) {
+    prefix = ', '
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
