@@ -103,5 +103,5 @@ test('simple', t => {
     '</tbody></table>'
   const actual = render(ast)
   t.is(actual, expected,
-    'should render a simple BulletList')
+    'should render a simple option list')
 })
