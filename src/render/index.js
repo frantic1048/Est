@@ -72,6 +72,15 @@ module.exports = function render (node) {
     suffix = '</var>'
   } else if (node.T === T.OptionDelimiter) {
     prefix = ', '
+  } else if (node.T === T.DefinitionList) {
+    prefix = '<dl>'
+    suffix = '</dl>'
+  } else if (node.T === T.DefinitionListTerm) {
+    prefix = '<dt>'
+    suffix = '</dt>'
+  } else if (node.T === T.DefinitionListDefinition) {
+    prefix = '<dd>'
+    suffix = '</dd>'
   }
   return `${prefix}${childs.join('')}${suffix}`
 }
