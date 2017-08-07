@@ -48,7 +48,24 @@ After build:
 
     const est = require('<PATH_TO_EST>')
 
-    const parsed = est.parse('reStructuredText string...')
+    // directly render rST into HTML string
+    const html = est.rst2html('reStructuredText string...')
+
+
+    // or...?
+    // welcome to the dark side...
+
+    // generate parsing tree
+    // which is an ASTy instance
+    const parse_t = est.parse('reStructuredText string...')
+
+    // transfrom parsing tree into doc tree
+    // which is ready to be rendered into HTML string
+    // which is an ASTy instance
+    const doc_t = est.transfrom(parse_t)
+
+    // render the doc tree into HTML string
+    const html_the_harder_way = est.render(doc_t)
 
 `parsed` is an ASTy_ instance of parsed input. All node types of the parsed tree can be found from ``est.TokenTypes`` .
 
