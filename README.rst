@@ -60,18 +60,17 @@ After build:
     const parse_t = est.parse('reStructuredText string...')
 
     // transfrom parsing tree into doc tree
-    // which is ready to be rendered into HTML string
     // which is an ASTy instance
     const doc_t = est.transfrom(parse_t)
 
     // render the doc tree into HTML string
     const html_the_harder_way = est.render(doc_t)
 
-`parsed` is an ASTy_ instance of parsed input. All node types of the parsed tree can be found from ``est.TokenTypes`` .
+All node types of the parsed tree can be found from ``est.TokenTypes`` .
 
 .. _ASTy: https://github.com/rse/asty
 
-The node structure of a specific markup could be refer in ``test/grammar.<MarkupName>.js``
+The node structure of a specific markup could be referred in ``test/grammar.<MarkupName>.js``
 
 Render function is under constructing.
 
