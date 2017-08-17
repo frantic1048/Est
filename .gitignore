@@ -1,2 +1,5 @@
 # build path
 /build
+
+# log files
+*.log
