@@ -65,14 +65,14 @@ function walker2 (node, depth, parent, when) {
   return node
 }
 
- /**
+/**
   * recursively fill an ASTy node's semantics
   * @param  {ASTYNode}
   * @return {ASTYNode}
   */
 function transform (node) {
   return node.walk(walker1)
-             .walk(walker2)
+    .walk(walker2)
 }
 
 module.exports = transform

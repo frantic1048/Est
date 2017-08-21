@@ -1,6 +1,7 @@
-const parser = require('./parser')
 const ASTY = require('asty')
 const PEGUtil = require('pegjs-util')
+
+const parser = require('./parser.pegjs')
 
 module.exports = function parse (rst, opts) {
   const asty = new ASTY()

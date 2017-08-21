@@ -4,7 +4,7 @@ import test from 'ava'
 // https://github.com/avajs/ava/issues/845
 import isMatch from './fixtures/isMatch'
 
-import est from '../'
+import est from '../lib/est.dev'
 import Tracer from './fixtures/Tracer'
 
 const parse = est.parse
@@ -144,19 +144,19 @@ test('complex description', t => {
             {
               T: T.OptionListItem,
               C: [
-              {T: T.OptionGroup},
+                {T: T.OptionGroup},
                 {
                   T: T.OptionDescription,
                   C: [
-                  { T: T.Paragraph },
+                    { T: T.Paragraph },
                     {
                       T: T.BulletList,
                       C: [
                         {
                           T: T.ListItem,
                           C: [
-                          { T: T.Paragraph },
-                          { T: T.BulletList }
+                            { T: T.Paragraph },
+                            { T: T.BulletList }
                           ]
                         }
                       ]
@@ -171,8 +171,8 @@ test('complex description', t => {
                 {
                   T: T.OptionGroup,
                   C: [
-                  { T: T.Option },
-                  { T: T.Option }
+                    { T: T.Option },
+                    { T: T.Option }
                   ]
                 },
                 {

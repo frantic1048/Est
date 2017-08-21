@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import est from '../'
+import est from '../lib/est.dev'
 
 const render = est.render
 const T = est.tokenTypes

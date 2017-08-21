@@ -4,7 +4,7 @@ import test from 'ava'
 // https://github.com/avajs/ava/issues/845
 import isMatch from './fixtures/isMatch'
 
-import est from '../'
+import est from '../lib/est.dev'
 import Tracer from './fixtures/Tracer'
 
 const parse = est.parse
@@ -157,12 +157,12 @@ test('cascade', t => {
             {
               T: T.ListItem,
               C: [
-              {T: T.Paragraph},
+                {T: T.Paragraph},
                 {
                   T: T.EnumeratedList,
                   C: [
-                  {T: T.ListItem},
-                  {T: T.ListItem}
+                    {T: T.ListItem},
+                    {T: T.ListItem}
                   ]
                 }
               ]
@@ -172,8 +172,8 @@ test('cascade', t => {
               C: [{
                 T: T.EnumeratedList,
                 C: [
-                {T: T.ListItem},
-                {T: T.ListItem}
+                  {T: T.ListItem},
+                  {T: T.ListItem}
                 ]
               }]
             },

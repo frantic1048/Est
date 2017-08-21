@@ -4,7 +4,7 @@ import test from 'ava'
 // https://github.com/avajs/ava/issues/845
 import isMatch from './fixtures/isMatch'
 
-import est from '../'
+import est from '../lib/est.dev'
 import Tracer from './fixtures/Tracer'
 
 const parse = est.parse
@@ -162,11 +162,11 @@ term2
                     {
                       T: T.BulletList,
                       C: [
-                    {T: T.ListItem},
-                    {T: T.ListItem}
+                        {T: T.ListItem},
+                        {T: T.ListItem}
                       ]
                     },
-                {T: T.Paragraph}
+                    {T: T.Paragraph}
                   ]
                 }
               ]
@@ -174,8 +174,8 @@ term2
             {
               T: T.DefinitionListItem,
               C: [
-              {T: T.DefinitionListTerm},
-              {T: T.DefinitionListDefinition}
+                {T: T.DefinitionListTerm},
+                {T: T.DefinitionListDefinition}
               ]
             }
           ]

@@ -4,7 +4,7 @@ import test from 'ava'
 // https://github.com/avajs/ava/issues/845
 import isMatch from './fixtures/isMatch'
 
-import est from '../'
+import est from '../lib/est.dev'
 import Tracer from './fixtures/Tracer'
 
 const parse = est.parse
@@ -48,7 +48,7 @@ test('implicit', t => {
     }
   }
   t.true(isMatch(actual, expected),
-    'shoulp parse implicit anonymous hyperlink')
+        'shoulp parse implicit anonymous hyperlink')
 })
 
 test('explicit', t => {

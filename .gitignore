@@ -1,5 +1,8 @@
 # build path
-/build
+/lib
 
 # log files
 *.log
+
+# using yarn.lock
+package-lock.json

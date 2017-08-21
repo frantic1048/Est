@@ -4,7 +4,7 @@ import test from 'ava'
 // https://github.com/avajs/ava/issues/845
 import isMatch from './fixtures/isMatch'
 
-import est from '../'
+import est from '../lib/est.dev'
 import Tracer from './fixtures/Tracer'
 
 const parse = est.parse
@@ -102,8 +102,8 @@ test('two paragraph in one item', t => {
             {
               T: T.ListItem,
               C: [
-              {T: T.Paragraph},
-              {T: T.Paragraph}
+                {T: T.Paragraph},
+                {T: T.Paragraph}
               ]
             },
             {
@@ -158,11 +158,11 @@ test('cascading sublist', t => {
           {
             T: T.ListItem,
             C: [
-            {T: T.Paragraph},
+              {T: T.Paragraph},
               {
                 T: T.BulletList,
                 C: [
-                {T: T.ListItem},
+                  {T: T.ListItem},
                   {
                     T: T.ListItem,
                     C: [{
