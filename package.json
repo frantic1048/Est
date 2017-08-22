@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "webpack --config webpack.dev.config.js",
     "ci": "webpack --config webpack.ci.config.js",
+    "dist": "webpack --config webpack.dist.config.js",
     "lint": "eslint -c .eslintrc.js src test",
     "test": "ava -v --no-power-assert"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/frantic1048/est.git"
+    "url": "https://github.com/frantic1048/Est"
   },
   "keywords": [
     "reStructuredText",
@@ -20,12 +21,19 @@
     "render",
     "HTML"
   ],
+  "files": [
+    "lib/*.js"
+  ],
   "author": "frantic1048",
   "license": "GPL-3.0",
-  "homepage": "https://bitbucket.org/frantic1048/est#readme",
+  "homepage": "https://github.com/frantic1048/Est",
+  "bugs": "https://github.com/frantic1048/Est/issues",
   "devDependencies": {
-    "asty": "^1.5.1",
     "ava": "^0.22.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-minify": "^0.2.0",
     "chalk": "^2.1.0",
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^4.5.0",
@@ -50,6 +58,7 @@
     "node": ">= 6"
   },
   "dependencies": {
+    "asty": "^1.5.1",
     "sanitize-html": "^1.14.1"
   }
 }
