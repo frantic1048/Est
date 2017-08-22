@@ -1,5 +1,5 @@
 Est
-======
+=========
 |license|_ |code quality|_ |ci|_ |dm|_
 
 .. |license| image:: https://img.shields.io/github/license/frantic1048/est.svg?style=flat-square
@@ -13,40 +13,25 @@ Est
 
 reStructuredText parser and renderer.
 
-Build
-======
+Install
+=========
 
-Prepare:
-
-.. code:: sh
-
-    # fetch source code
-    git clone https://github.com/frantic1048/Est.git
-
-    # fetch dependencies
-    yarn install
-
-
-Debug build and run test:
+Use yarn to fetch the package, or npm if you prefer.
 
 .. code:: sh
 
-    yarn ci
+    yarn add @frantic1048/Est
 
-Normal build:
-
-.. code:: sh
-
-    yarn build
 
 Usage
-======
+=========
 
 After build:
 
 .. code:: js
 
-    const est = require('<PATH_TO_EST>')
+    // do not forget the ``@frantic1048`` scope
+    const est = require('@frantic1048/Est')
 
     // directly render rST into HTML string
     const html = est.rst2html('reStructuredText string...')
@@ -73,6 +58,46 @@ All node types of the parsed tree can be found from ``est.TokenTypes`` .
 The node structure of a specific markup could be referred in ``test/grammar.<MarkupName>.js``
 
 Render function is under constructing.
+
+Build
+=========
+
+Prepare:
+
+.. code:: sh
+
+    # fetch source code
+    git clone https://github.com/frantic1048/Est.git
+
+    # fetch dependencies
+    yarn
+
+
+Build and run test:
+
+.. code:: sh
+
+    yarn ci
+
+
+Production build:
+
+.. code:: sh
+
+    yarn dist
+
+
+Develop:
+
+.. code:: sh
+
+    yarn dev
+
+The build output is under ``lib`` folder. All possible files are:
+
+:est.dev.js: trace on, UMD module, debug and develop oriented.
+:est.min.js: trace off, single variable, Browser oriented.
+:est.js: trace off, UMD module, Node.js oriented.
 
 Recognized Markups
 ==================
