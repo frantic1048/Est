@@ -48,7 +48,7 @@ test('implicit', t => {
     }
   }
   t.true(isMatch(actual, expected),
-        'shoulp parse implicit anonymous hyperlink')
+    'shoulp parse implicit anonymous hyperlink')
 })
 
 test('explicit', t => {
