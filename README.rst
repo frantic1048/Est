@@ -95,9 +95,9 @@ Develop:
 
 The build output is under ``lib`` folder. All possible files are:
 
-:est.dev.js: trace on, UMD module, debug and develop oriented.
+:est.dev.js: trace on, CommonJS module, debug and develop oriented.
 :est.min.js: trace off, single variable, Browser oriented.
-:est.js: trace off, UMD module, Node.js oriented.
+:est.js: trace off, CommonJS module, Node.js oriented.
 
 Recognized Markups
 ==================

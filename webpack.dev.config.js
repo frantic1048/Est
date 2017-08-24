@@ -11,7 +11,7 @@ module.exports = {
     path: resolve(__dirname, 'lib'),
     filename: `${libraryName}.dev.js`,
     library: libraryName,
-    libraryTarget: 'umd'
+    libraryTarget: 'commonjs2'
   },
   externals: {
     'sanitize-html': {

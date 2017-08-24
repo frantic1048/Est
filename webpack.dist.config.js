@@ -28,7 +28,7 @@ const nodeConfig = Object.assign(baseConfig(),
       path: resolve(__dirname, 'lib'),
       filename: `${libraryName}.js`,
       library: libraryName,
-      libraryTarget: 'umd'
+      libraryTarget: 'commonjs2'
     },
     externals: {
       'sanitize-html': {
