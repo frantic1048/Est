@@ -1,6 +1,6 @@
 {
   "name": "@frantic1048/est",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "reStructuredText parser and renderer",
   "main": "lib/est.js",
   "scripts": {
