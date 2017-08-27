@@ -1,14 +1,12 @@
-const tokenTypes = require('./tokenTypes')
-const parse = require('./parse')
-const transform = require('./transform')
-const render = require('./render')
+import tokenTypes from './tokenTypes.js'
+import parse from './parse.js'
+import transform from './transform/index.js'
+import render from './render/index.js'
 
-exports.tokenTypes = tokenTypes
-
-exports.parse = parse
-
-exports.transform = transform
-
-exports.render = render
-
-exports.rst2html = s => render(transform(parse(s).ast))
+export default {
+  tokenTypes,
+  parse,
+  transform,
+  render,
+  rst2html(s) { return render(transform(parse(s).ast)) }
+}

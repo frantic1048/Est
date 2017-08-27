@@ -10,9 +10,9 @@
  *   - set section header levels
  */
 
-const sanitizeHtml = require('sanitize-html')
+import sanitizeHtml from 'sanitize-html'
 
-const T = require('../tokenTypes')
+import T from '../tokenTypes.js'
 
 const sanitize = s => sanitizeHtml(s,
   {
@@ -70,9 +70,7 @@ function walker2 (node, depth, parent, when) {
   * @param  {ASTYNode}
   * @return {ASTYNode}
   */
-function transform (node) {
+export default function transform (node) {
   return node.walk(walker1)
     .walk(walker2)
 }
-
-module.exports = transform
