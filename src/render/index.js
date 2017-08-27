@@ -1,6 +1,6 @@
-const sanitizeHtml = require('sanitize-html')
+import sanitizeHtml from 'sanitize-html'
 
-const T = require('../tokenTypes')
+import T from '../tokenTypes'
 
 const sanitize = s => sanitizeHtml(s,
   {
@@ -12,7 +12,7 @@ const sanitize = s => sanitizeHtml(s,
  * @param  {ASTYNode}  input ASTy node
  * @return {string}      rendered HTML
  */
-module.exports = function render (node) {
+export default function render (node) {
   const childs = []
   if (Array.isArray(node.C)) {
     for (const e of node.C) {

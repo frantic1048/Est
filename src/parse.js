@@ -1,9 +1,9 @@
-const ASTY = require('asty')
-const PEGUtil = require('pegjs-util')
+import ASTY from 'asty'
+import PEGUtil from 'pegjs-util'
 
-const parser = require('./parser.pegjs')
+import * as parser from './parser.pegjs'
 
-module.exports = function parse (rst, opts) {
+export default function parse (rst, opts) {
   const asty = new ASTY()
   const result = PEGUtil.parse(
     parser,

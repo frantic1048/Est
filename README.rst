@@ -31,7 +31,7 @@ After build:
 .. code:: js
 
     // do not forget the ``@frantic1048`` scope
-    const est = require('@frantic1048/Est')
+    import est from '@frantic1048/Est'
 
     // directly render rST into HTML string
     const html = est.rst2html('reStructuredText string...')

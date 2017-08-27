@@ -23,6 +23,12 @@ module.exports = {
       commonjs2: 'asty'
     }
   },
+  resolveLoader: {
+    modules: [
+      resolve(__dirname, 'loaders'),
+      'node_modules'
+    ]
+  },
   module: {
     noParse: /node_modules\/pegjs-util\/PEGUtil\.js/,
     rules: [
@@ -31,7 +37,10 @@ module.exports = {
         loader: 'pegjs-loader',
         options: {
           cache: false,
-          trace: true
+          trace: true,
+          dependencies: {
+            T: './tokenTypes.js'
+          }
         }
       }
     ]

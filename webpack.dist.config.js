@@ -5,6 +5,12 @@ const libraryName = 'est'
 function baseConfig () {
   return {
     entry: './src/index.js',
+    resolveLoader: {
+      modules: [
+        resolve(__dirname, 'loaders'),
+        'node_modules'
+      ]
+    },
     module: {
       noParse: /node_modules\/pegjs-util\/PEGUtil\.js/,
       rules: [
@@ -13,7 +19,10 @@ function baseConfig () {
           loader: 'pegjs-loader',
           options: {
             cache: false,
-            trace: false
+            trace: false,
+            dependencies: {
+              T: './tokenTypes.js'
+            }
           }
         }
       ]
