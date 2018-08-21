@@ -399,3 +399,23 @@ test('bare email adress', t => {
   }
   t.true(isMatch(actual, expected), 'should parse as StandAloneHyperlink')
 })
+
+test('does not allow bare scheme:', t => {
+  const tracer = t.context.tracer
+  const actual = parse('scheme:', { tracer })
+  const expected = {
+    ast: {
+      T: T.Document,
+      C: [{
+        T: T.Paragraph,
+        C: [
+          {
+            T: T.Text,
+            A: {
+              value: 'scheme:'
+            }
+          }]
+      }]}
+  }
+  t.true(isMatch(actual, expected), 'should not allow bare scheme:')
+})

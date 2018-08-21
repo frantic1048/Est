@@ -782,7 +782,13 @@ URIHierPart
   { return "//" + a + p}
   / URIPathAbsolute
   / URIPathRootless
-  / URIPathEmpty
+  /*
+   * [Non standard]
+   * https://github.com/frantic1048/Est/issues/1
+   * python rST does not recognize this grammar
+   * we disable this rule
+   */
+  // / URIPathEmpty
 
 URIAuthority
   = a:((URIUserInfo "@")? URIHost (":" URIPort)?)
