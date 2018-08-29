@@ -57,7 +57,7 @@ function walker2 (node, depth, parent, when) {
       // TODO: assert anonymousTargets.length > 0
 
       // consume an anonymousTarget
-      node.set('ref', anonymousTargets.pop())
+      node.set('ref', anonymousTargets.shift())
     }
   } else if (node.T === T.Section) {
     node.set('level', sectionLevelOfStyles.get(node.A.style))

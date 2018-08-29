@@ -47,3 +47,61 @@ test('simple', t => {
   t.true(isMatch(actual, expected),
     'should transform anonymous hyperlink')
 })
+
+test('keep order', t => {
+  const src = `Chino__ , Jun__
+
+.. __: https://sketchfab.com/models/9120703a4aee4c2cb0313a9ca3e1e1a3
+.. __: https://sketchfab.com/models/e263629d3a824aa18f49c28ddf2b2f14
+`
+
+  const ast = parse(src, {tracer: t.context.tracer}).ast
+
+  const expected = {
+    T: T.Document,
+    C: [
+      {
+        T: T.Paragraph,
+        C: [
+          {
+            T: T.AnonymousHyperlink,
+            A: {ref: 'https://sketchfab.com/models/9120703a4aee4c2cb0313a9ca3e1e1a3'},
+            C: [{
+              T: T.Text,
+              A: {value: 'Chino'}
+            }]
+          },
+          {
+            T: T.Text,
+            A: {value: ' , '}
+          },
+          {
+            T: T.AnonymousHyperlink,
+            A: {ref: 'https://sketchfab.com/models/e263629d3a824aa18f49c28ddf2b2f14'},
+            C: [{
+              T: T.Text,
+              A: {value: 'Jun'}
+            }]
+          }
+        ]
+      },
+      {
+        T: T.Target,
+        C: [{
+          T: T.Text,
+          A: {value: 'https://sketchfab.com/models/9120703a4aee4c2cb0313a9ca3e1e1a3'}
+        }]
+      },
+      {
+        T: T.Target,
+        C: [{
+          T: T.Text,
+          A: {value: 'https://sketchfab.com/models/e263629d3a824aa18f49c28ddf2b2f14'}
+        }]
+      }
+    ]}
+
+  const actual = transform(ast)
+  t.true(isMatch(actual, expected),
+    'should keep anonymous hyperlink order')
+})
